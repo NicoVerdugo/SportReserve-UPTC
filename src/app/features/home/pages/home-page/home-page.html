@@ -1,1 +1,81 @@
-<p>home-page works!</p>
+<div class="home-page">
+  <!-- Hero Section -->
+  <app-hero-section (ctaClick)="handleHeroCta($event)"></app-hero-section>
+
+  <!-- Features Section -->
+  <app-features-section></app-features-section>
+
+  <!-- Featured Fields -->
+  <section class="featured-fields">
+    <div class="section-container">
+      <h2 class="section-title">Canchas Destacadas</h2>
+      <p class="section-subtitle">Explora nuestras instalaciones disponibles en UPTC</p>
+
+      @if (loading()) {
+        <div class="loading-container">
+          <mat-spinner diameter="48"></mat-spinner>
+        </div>
+      } @else if (featuredFields().length === 0) {
+        <div class="empty-fields">
+          <p>No hay canchas disponibles en este momento.</p>
+          <button mat-raised-button color="primary" (click)="onViewFields()">Ver todas las canchas</button>
+        </div>
+      } @else {
+        <div class="fields-grid">
+          @for (field of featuredFields(); track field._id) {
+            <mat-card class="field-card">
+              <div class="field-image-wrapper">
+                @if (field.images && field.images.length > 0) {
+                  <img [src]="field.images[0]" [alt]="field.name" class="field-image" />
+                } @else {
+                  <div class="field-image-placeholder">
+                    <span class="material-icons">sports_soccer</span>
+                  </div>
+                }
+                <span class="sport-badge">{{ getSportLabel(field.sportType) }}</span>
+              </div>
+              <mat-card-content class="field-content">
+                <h3 class="field-name">{{ field.name }}</h3>
+                <p class="field-location">
+                  <span class="material-icons icon-sm">location_on</span>
+                  {{ field.location }}
+                </p>
+                <p class="field-description">{{ field.description }}</p>
+                <div class="field-meta">
+                  <span class="field-price">${{ field.pricePerHour | number:'1.0-0' }}/hora</span>
+                  <span class="field-capacity">
+                    <span class="material-icons icon-sm">group</span>
+                    {{ field.capacity }} personas
+                  </span>
+                </div>
+              </mat-card-content>
+              <mat-card-actions class="field-actions">
+                <button mat-raised-button color="primary" (click)="onReserve(field._id)">
+                  Reservar
+                </button>
+                <button mat-stroked-button (click)="onViewFields()">Ver más</button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+
+        <div class="view-all-container">
+          <button mat-raised-button color="accent" (click)="onViewFields()">
+            Ver todas las canchas
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner">
+    <div class="cta-content">
+      <h2>¡Comienza hoy mismo!</h2>
+      <p>Regístrate gratis y reserva tu cancha favorita en minutos</p>
+      <button mat-raised-button class="cta-register-btn" (click)="onRegister()">
+        Crear cuenta gratis
+      </button>
+    </div>
+  </section>
+</div>

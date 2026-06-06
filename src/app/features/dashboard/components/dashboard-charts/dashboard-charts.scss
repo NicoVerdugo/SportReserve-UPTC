@@ -1,0 +1,126 @@
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  border-radius: 16px !important;
+
+  mat-card-header {
+    padding: 1.25rem 1.5rem 0;
+  }
+
+  mat-card-content {
+    padding: 1rem 1.5rem 1.5rem !important;
+  }
+
+  mat-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+  }
+}
+
+/* Vertical bar chart */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 220px;
+  padding-top: 16px;
+  overflow-x: auto;
+}
+
+.bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 36px;
+}
+
+.bar-wrapper {
+  display: flex;
+  align-items: flex-end;
+  height: 200px;
+  width: 100%;
+  justify-content: center;
+}
+
+.bar {
+  width: 70%;
+  border-radius: 6px 6px 0 0;
+  transition: height 0.4s ease, opacity 0.2s;
+  cursor: pointer;
+
+  &:hover { opacity: 0.82; }
+
+  &--revenue {
+    background: linear-gradient(180deg, #f59e0b 0%, #f97316 100%);
+  }
+}
+
+.bar-label {
+  margin-top: 6px;
+  font-size: 0.72rem;
+  color: #6b7280;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Horizontal bar chart */
+.h-bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.h-bar-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 36px;
+  align-items: center;
+  gap: 10px;
+}
+
+.h-bar-label {
+  font-size: 0.82rem;
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.h-bar-track {
+  height: 12px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.h-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.h-bar-value {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6366f1;
+  text-align: right;
+}
+
+.no-data {
+  text-align: center;
+  color: #9ca3af;
+  padding: 2rem 0;
+  font-size: 0.9rem;
+}

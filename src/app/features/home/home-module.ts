@@ -1,14 +1,3 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { HomeRoutingModule } from './home-routing-module';
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    HomeRoutingModule
-  ]
-})
-export class HomeModule { }
+// Standalone/signals architecture — lazy loading is handled via HomeRoutingModule routes.
+// This file is kept for compatibility; no NgModule is needed.
+export const HomeModule = [];

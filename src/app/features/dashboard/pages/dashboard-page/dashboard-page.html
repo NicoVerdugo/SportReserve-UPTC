@@ -1,1 +1,79 @@
-<p>dashboard-page works!</p>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div class="header-text">
+      <h1>@if (isAdmin()) { Panel de Administración } @else { Mi Dashboard }</h1>
+      <p>@if (isAdmin()) { Resumen general del sistema } @else { Bienvenido de vuelta }</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Cargando información...</p>
+    </div>
+  }
+
+  @if (isAdmin() && !loading()) {
+    <app-dashboard-stats [stats]="adminStats()" [isAdmin]="true" />
+    <app-dashboard-charts [stats]="adminStats()" />
+    <app-recent-activity [reservations]="recentReservations" />
+  }
+
+  @if (!isAdmin() && !loading()) {
+    <app-dashboard-stats [stats]="userStats()" [isAdmin]="false" />
+
+    <div class="upcoming-section">
+      <h2>Próximas Reservas</h2>
+      @if (upcomingReservations.length) {
+        <div class="upcoming-table-wrapper">
+          <table class="upcoming-table">
+            <thead>
+              <tr>
+                <th>Cancha</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Precio</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of upcomingReservations; track r._id) {
+                <tr>
+                  <td>{{ $any(r.fieldId)?.name ?? 'Cancha' }}</td>
+                  <td>{{ r.date | date:'dd/MM/yyyy':'UTC' }}</td>
+                  <td>{{ r.startTime }} - {{ r.endTime }}</td>
+                  <td>
+                    <span class="status-badge status-badge--{{ r.status }}">
+                      {{ r.status === 'pending' ? 'Pendiente' :
+                         r.status === 'confirmed' ? 'Confirmada' :
+                         r.status === 'cancelled' ? 'Cancelada' : 'Completada' }}
+                    </span>
+                  </td>
+                  <td>{{ r.totalPrice | currency:'COP':'symbol':'1.0-0' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-upcoming">
+          <p>No tienes reservas próximas.</p>
+        </div>
+      }
+    </div>
+
+    <div class="quick-actions">
+      <h2>Acciones Rápidas</h2>
+      <div class="actions-row">
+        <button mat-raised-button color="primary" (click)="navigateToNewReservation()">
+          <mat-icon>add</mat-icon>
+          Nueva Reserva
+        </button>
+        <button mat-stroked-button color="primary" (click)="navigateToFields()">
+          <mat-icon>sports_soccer</mat-icon>
+          Ver Canchas
+        </button>
+      </div>
+    </div>
+  }
+</div>

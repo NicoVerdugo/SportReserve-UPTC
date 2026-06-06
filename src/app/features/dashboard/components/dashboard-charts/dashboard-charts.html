@@ -1,1 +1,57 @@
-<p>dashboard-charts works!</p>
+@if (stats()) {
+  @let s = stats()!;
+  <div class="charts-grid">
+    <!-- Revenue by month bar chart -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Ingresos por Mes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (s.revenueByMonth.length) {
+          <div class="bar-chart">
+            @for (item of s.revenueByMonth; track item.month) {
+              <div class="bar-group">
+                <div class="bar-wrapper">
+                  <div class="bar bar--revenue"
+                       [style.height]="getBarHeight(item.revenue)"
+                       [title]="item.revenue | currency:'COP':'symbol':'1.0-0'">
+                  </div>
+                </div>
+                <span class="bar-label">{{ item.month }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="no-data">Sin datos disponibles</div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Reservations by field horizontal bar chart -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Reservas por Cancha</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (s.reservationsByField.length) {
+          <div class="h-bar-chart">
+            @for (item of s.reservationsByField; track item.fieldName) {
+              <div class="h-bar-row">
+                <span class="h-bar-label">{{ item.fieldName }}</span>
+                <div class="h-bar-track">
+                  <div class="h-bar-fill"
+                       [style.width]="getBarWidth(item.count)"
+                       [title]="item.count + ' reservas'">
+                  </div>
+                </div>
+                <span class="h-bar-value">{{ item.count }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="no-data">Sin datos disponibles</div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+}

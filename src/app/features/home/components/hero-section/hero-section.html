@@ -1,1 +1,51 @@
-<p>hero-section works!</p>
+<section class="hero-section">
+  <div class="hero-bg">
+    <div class="hero-overlay"></div>
+    <div class="hero-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="material-icons">sports_soccer</span>
+      Plataforma Oficial UPTC
+    </div>
+    <h1 class="hero-title">
+      Reserva tu Cancha<br />
+      <span class="hero-title-accent">en UPTC</span>
+    </h1>
+    <p class="hero-subtitle">
+      Gestiona tus reservas deportivas de forma fácil, rápida y segura.
+      Disponibilidad en tiempo real, pagos seguros y confirmación inmediata.
+    </p>
+    <div class="hero-actions">
+      <button mat-raised-button class="btn-primary-hero" (click)="onViewFields()">
+        <span class="material-icons">search</span>
+        Ver Canchas
+      </button>
+      <button mat-stroked-button class="btn-secondary-hero" (click)="onRegister()">
+        <span class="material-icons">person_add</span>
+        Registrarse
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-number">10+</span>
+        <span class="stat-label">Canchas</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">500+</span>
+        <span class="stat-label">Usuarios</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">Seguro</span>
+      </div>
+    </div>
+  </div>
+</section>

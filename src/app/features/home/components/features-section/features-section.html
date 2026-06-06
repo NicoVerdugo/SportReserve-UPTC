@@ -1,1 +1,20 @@
-<p>features-section works!</p>
+<section class="features-section">
+  <div class="features-container">
+    <h2 class="features-title">¿Por qué elegir SportReserve?</h2>
+    <p class="features-subtitle">Todo lo que necesitas para gestionar tus reservas deportivas</p>
+
+    <div class="features-grid">
+      @for (feature of features; track feature.title) {
+        <mat-card class="feature-card">
+          <div class="feature-icon-wrapper" [style.background]="feature.color + '1a'">
+            <span class="material-icons feature-icon" [style.color]="feature.color">
+              {{ feature.icon }}
+            </span>
+          </div>
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+        </mat-card>
+      }
+    </div>
+  </div>
+</section>

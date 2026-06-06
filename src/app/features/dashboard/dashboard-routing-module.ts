@@ -1,10 +1,9 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class DashboardRoutingModule { }
+export const DashboardRoutingModule: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./pages/dashboard-page/dashboard-page').then(m => m.DashboardPage),
+  },
+];

@@ -1,1 +1,93 @@
-<p>dashboard-stats works!</p>
+@if (isAdmin() && stats()) {
+  @let adminStats = $any(stats());
+  <div class="stats-grid">
+    <mat-card class="stat-card stat-card--revenue">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>attach_money</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ adminStats.totalRevenue | currency:'COP':'symbol':'1.0-0' }}</span>
+          <span class="stat-label">Ingresos Totales</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card stat-card--reservations">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>event_available</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ adminStats.activeReservations }}</span>
+          <span class="stat-label">Reservas Activas</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card stat-card--users">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ adminStats.totalUsers }}</span>
+          <span class="stat-label">Usuarios</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card stat-card--fields">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>sports_soccer</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ adminStats.totalFields }}</span>
+          <span class="stat-label">Canchas</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+}
+
+@if (!isAdmin() && stats()) {
+  @let userStats = $any(stats());
+  <div class="stats-grid stats-grid--user">
+    <mat-card class="stat-card stat-card--reservations">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>event_note</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ userStats.totalReservations }}</span>
+          <span class="stat-label">Mis Reservas</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card stat-card--revenue">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>payments</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ userStats.totalSpent | currency:'COP':'symbol':'1.0-0' }}</span>
+          <span class="stat-label">Total Gastado</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card stat-card--notifications">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>notifications</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ userStats.unreadNotifications }}</span>
+          <span class="stat-label">Notificaciones</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+}
