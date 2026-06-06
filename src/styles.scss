@@ -1,9 +1,3 @@
-
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
 html {
@@ -17,23 +11,126 @@ html {
   ));
 }
 
-body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
+// ─── Reset & Base ────────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; }
 
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
+html, body {
+  height: 100%;
+  margin: 0;
+  color-scheme: light;
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
 }
-/* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// ─── CSS Custom Properties ───────────────────────────────────────────────────
+:root {
+  --sr-primary:       #1565C0;
+  --sr-primary-dark:  #003c8f;
+  --sr-primary-light: #5e92f3;
+  --sr-accent:        #00897B;
+  --sr-warn:          #e53935;
+  --sr-success:       #2e7d32;
+  --sr-warning:       #f57c00;
+  --sr-bg:            #f5f5f5;
+  --sr-surface:       #ffffff;
+  --sr-border:        #e0e0e0;
+  --sr-text-primary:  #212121;
+  --sr-text-secondary:#757575;
+  --sr-shadow-sm:     0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --sr-shadow-md:     0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  --sr-shadow-lg:     0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  --sr-radius-sm:     4px;
+  --sr-radius-md:     8px;
+  --sr-radius-lg:     16px;
+  --sr-sidebar-width: 260px;
+  --sr-header-height: 64px;
+}
+
+// ─── Snackbar Themes ─────────────────────────────────────────────────────────
+.success-snackbar .mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #2e7d32;
+  --mat-snack-bar-button-color: #fff;
+  color: #fff;
+}
+.error-snackbar .mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #c62828;
+  --mat-snack-bar-button-color: #fff;
+  color: #fff;
+}
+.warning-snackbar .mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #e65100;
+  --mat-snack-bar-button-color: #fff;
+  color: #fff;
+}
+.info-snackbar .mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #1565c0;
+  --mat-snack-bar-button-color: #fff;
+  color: #fff;
+}
+
+// ─── Utilities ───────────────────────────────────────────────────────────────
+.full-width  { width: 100%; }
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between{ display: flex; align-items: center; justify-content: space-between; }
+.gap-8       { gap: 8px; }
+.gap-16      { gap: 16px; }
+.mt-16       { margin-top: 16px; }
+.mb-16       { margin-bottom: 16px; }
+.p-16        { padding: 16px; }
+.p-24        { padding: 24px; }
+
+.page-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  h1, h2 { margin: 0; color: var(--sr-text-primary); }
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.pending   { background: #fff3e0; color: #e65100; }
+  &.confirmed { background: #e8f5e9; color: #2e7d32; }
+  &.cancelled { background: #ffebee; color: #c62828; }
+  &.completed { background: #e3f2fd; color: #1565c0; }
+  &.active    { background: #e8f5e9; color: #2e7d32; }
+  &.inactive  { background: #f5f5f5; color: #616161; }
+  &.maintenance { background: #fff8e1; color: #f57f17; }
+  &.paid      { background: #e8f5e9; color: #2e7d32; }
+  &.rejected  { background: #ffebee; color: #c62828; }
+  &.refunded  { background: #e8eaf6; color: #3949ab; }
+}
+
+// ─── Scrollbar ───────────────────────────────────────────────────────────────
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #bdbdbd; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9e9e9e; }
+
+// ─── Mat overrides ───────────────────────────────────────────────────────────
+.mat-mdc-card { border-radius: var(--sr-radius-md) !important; }
+.mat-mdc-raised-button, .mat-mdc-button {
+  border-radius: var(--sr-radius-sm) !important;
+}
