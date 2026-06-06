@@ -1,0 +1,131 @@
+.register-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  border-radius: var(--sr-radius-lg) !important;
+  box-shadow: var(--sr-shadow-md) !important;
+}
+
+.register-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 0 24px;
+  margin-bottom: 0;
+
+  &.mat-mdc-card-header {
+    flex-direction: column;
+  }
+}
+
+.logo-container {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--sr-primary) 0%, var(--sr-primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: var(--sr-shadow-sm);
+}
+
+.logo-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #fff;
+}
+
+.register-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--sr-text-primary);
+  margin: 0 0 4px;
+}
+
+.register-subtitle {
+  font-size: 0.95rem;
+  color: var(--sr-text-secondary);
+  margin: 0;
+}
+
+.name-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 0;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.half-field {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 8px;
+}
+
+.full-field {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.terms-row {
+  margin: 4px 0 20px;
+}
+
+.terms-link {
+  color: var(--sr-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-spinner {
+  display: inline-block;
+}
+
+.register-footer {
+  padding: 16px 0 0;
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--sr-text-secondary);
+  }
+}
+
+.login-link {
+  color: var(--sr-primary);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

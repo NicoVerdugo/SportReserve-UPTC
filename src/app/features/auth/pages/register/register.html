@@ -1,1 +1,143 @@
-<p>register works!</p>
+<div class="register-wrapper">
+  <mat-card class="register-card">
+
+    <!-- Header -->
+    <mat-card-header class="register-header">
+      <div class="logo-container">
+        <mat-icon class="logo-icon">app_registration</mat-icon>
+      </div>
+      <h1 class="register-title">Crear Cuenta</h1>
+      <p class="register-subtitle">SportReserve UPTC</p>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- First name + Last name row -->
+        <div class="name-row">
+          <mat-form-field appearance="outline" class="half-field">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="firstName" placeholder="Ej: Juan" autocomplete="given-name" />
+            <mat-icon matPrefix>person</mat-icon>
+            @if (form.get('firstName')?.invalid && form.get('firstName')?.touched) {
+              <mat-error>{{ getFirstNameError() }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-field">
+            <mat-label>Apellido</mat-label>
+            <input matInput formControlName="lastName" placeholder="Ej: Perez" autocomplete="family-name" />
+            <mat-icon matPrefix>person</mat-icon>
+            @if (form.get('lastName')?.invalid && form.get('lastName')?.touched) {
+              <mat-error>{{ getLastNameError() }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-field">
+          <mat-label>Correo electronico</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="correo@uptc.edu.co" autocomplete="email" />
+          <mat-icon matPrefix>email</mat-icon>
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <mat-error>{{ getEmailError() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Phone (optional) -->
+        <mat-form-field appearance="outline" class="full-field">
+          <mat-label>Telefono (opcional)</mat-label>
+          <input matInput type="tel" formControlName="phone" placeholder="Ej: 3001234567" autocomplete="tel" />
+          <mat-icon matPrefix>phone</mat-icon>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-field">
+          <mat-label>Contrasena</mat-label>
+          <input
+            matInput
+            [type]="hidePassword() ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Minimo 6 caracteres"
+            autocomplete="new-password"
+          />
+          <mat-icon matPrefix>lock</mat-icon>
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            (click)="hidePassword.set(!hidePassword())"
+            [attr.aria-label]="hidePassword() ? 'Mostrar contrasena' : 'Ocultar contrasena'"
+          >
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.get('password')?.invalid && form.get('password')?.touched) {
+            <mat-error>{{ getPasswordError() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Confirm password -->
+        <mat-form-field appearance="outline" class="full-field">
+          <mat-label>Confirmar contrasena</mat-label>
+          <input
+            matInput
+            [type]="hideConfirm() ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            placeholder="Repite tu contrasena"
+            autocomplete="new-password"
+          />
+          <mat-icon matPrefix>lock_reset</mat-icon>
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            (click)="hideConfirm.set(!hideConfirm())"
+            [attr.aria-label]="hideConfirm() ? 'Mostrar contrasena' : 'Ocultar contrasena'"
+          >
+            <mat-icon>{{ hideConfirm() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if ((form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) || (form.hasError('passwordsMismatch') && form.get('confirmPassword')?.touched)) {
+            <mat-error>{{ getConfirmPasswordError() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Accept terms -->
+        <div class="terms-row">
+          <mat-checkbox formControlName="acceptTerms" color="primary">
+            Acepto los <a href="#" class="terms-link">terminos y condiciones</a>
+          </mat-checkbox>
+        </div>
+
+        <!-- Submit button -->
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="submit-btn"
+          [disabled]="form.invalid || loading()"
+        >
+          @if (loading()) {
+            <ng-container>
+              <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
+              <span>Creando cuenta...</span>
+            </ng-container>
+          } @else {
+            <ng-container>
+              <mat-icon>how_to_reg</mat-icon>
+              <span>Crear Cuenta</span>
+            </ng-container>
+          }
+        </button>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer class="register-footer">
+      <p>
+        ¿Ya tienes cuenta?
+        <a routerLink="/auth/login" class="login-link">Inicia sesion</a>
+      </p>
+    </mat-card-footer>
+
+  </mat-card>
+</div>
