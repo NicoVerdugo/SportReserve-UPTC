@@ -1,1 +1,60 @@
-<p>footer works!</p>
+<footer class="site-footer">
+  <div class="footer-container">
+
+    <!-- Brand block -->
+    <div class="footer-brand">
+      <a class="footer-brand__link" routerLink="/">
+        <mat-icon class="footer-brand__icon">sports_soccer</mat-icon>
+        <span>SportReserve <strong>UPTC</strong></span>
+      </a>
+      <p class="footer-brand__tagline">
+        Sistema de reservas deportivas de la<br>
+        Universidad Pedagógica y Tecnológica de Colombia
+      </p>
+    </div>
+
+    <!-- Quick links -->
+    <div class="footer-links">
+      <h4 class="footer-links__title">Navegación</h4>
+      <ul>
+        <li><a routerLink="/">Inicio</a></li>
+        <li><a routerLink="/fields">Canchas</a></li>
+        <li><a routerLink="/auth/login">Iniciar sesión</a></li>
+        <li><a routerLink="/auth/register">Registrarse</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact block -->
+    <div class="footer-contact">
+      <h4 class="footer-links__title">Contacto</h4>
+      <ul>
+        <li>
+          <mat-icon>location_on</mat-icon>
+          Tunja, Boyacá, Colombia
+        </li>
+        <li>
+          <mat-icon>email</mat-icon>
+          sportreserve&#64;uptc.edu.co
+        </li>
+        <li>
+          <mat-icon>phone</mat-icon>
+          +57 (8) 742 2189
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <span>
+      &copy; {{ currentYear }} SportReserve UPTC. Todos los derechos reservados.
+    </span>
+    <span class="footer-bottom__uptc">
+      <mat-icon>school</mat-icon>
+      UPTC &mdash; Boyacá
+    </span>
+  </div>
+</footer>

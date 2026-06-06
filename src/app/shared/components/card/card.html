@@ -1,1 +1,19 @@
-<p>card works!</p>
+<mat-card class="app-card">
+
+  @if (title()) {
+    <mat-card-header>
+      <mat-card-title>{{ title() }}</mat-card-title>
+      @if (subtitle()) {
+        <mat-card-subtitle>{{ subtitle() }}</mat-card-subtitle>
+      }
+    </mat-card-header>
+    <mat-divider></mat-divider>
+  }
+
+  <mat-card-content class="app-card__content">
+    <ng-content></ng-content>
+  </mat-card-content>
+
+  <ng-content select="[card-actions]"></ng-content>
+
+</mat-card>

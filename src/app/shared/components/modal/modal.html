@@ -1,1 +1,50 @@
-<p>modal works!</p>
+<div class="modal-wrapper" [class]="'modal-wrapper--' + (data.type || 'info')">
+
+  <!-- Icon header -->
+  <div class="modal-icon-row">
+    <div class="modal-icon-circle">
+      <mat-icon>{{ typeIcon }}</mat-icon>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <h2 mat-dialog-title class="modal-title">{{ data.title }}</h2>
+
+  <!-- Message -->
+  <mat-dialog-content class="modal-content">
+    <p>{{ data.message }}</p>
+  </mat-dialog-content>
+
+  <!-- Actions -->
+  <mat-dialog-actions align="end" class="modal-actions">
+    <button
+      mat-stroked-button
+      (click)="cancel()">
+      {{ data.cancelText || 'Cancelar' }}
+    </button>
+
+    @if (data.type === 'danger') {
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="confirm()">
+        {{ data.confirmText || 'Confirmar' }}
+      </button>
+    } @else if (data.type === 'warning') {
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="confirm()">
+        {{ data.confirmText || 'Confirmar' }}
+      </button>
+    } @else {
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="confirm()">
+        {{ data.confirmText || 'Confirmar' }}
+      </button>
+    }
+  </mat-dialog-actions>
+
+</div>

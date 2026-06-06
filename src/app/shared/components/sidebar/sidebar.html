@@ -1,1 +1,87 @@
-<p>sidebar works!</p>
+<aside class="sidebar" [class.sidebar--open]="isOpen()">
+
+  <!-- Overlay for mobile -->
+  <div class="sidebar-overlay" (click)="onClose()"></div>
+
+  <div class="sidebar-inner">
+
+    <!-- Header / Brand -->
+    <div class="sidebar-header">
+      <a class="sidebar-brand" routerLink="/dashboard">
+        <mat-icon class="sidebar-brand__icon">sports_soccer</mat-icon>
+        <span class="sidebar-brand__text">SportReserve<br><small>UPTC</small></span>
+      </a>
+      <button mat-icon-button class="sidebar-close-btn" aria-label="Cerrar menú" (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- User info strip -->
+    <div class="sidebar-user">
+      <div class="sidebar-user__avatar">
+        @if (currentUser()?.avatar) {
+          <img [src]="currentUser()!.avatar" [alt]="userFullName()" />
+        } @else {
+          <span>{{ currentUser()?.firstName?.charAt(0) }}{{ currentUser()?.lastName?.charAt(0) }}</span>
+        }
+      </div>
+      <div class="sidebar-user__info">
+        <span class="sidebar-user__name">{{ userFullName() }}</span>
+        <span class="sidebar-user__role">{{ isAdmin() ? 'Administrador' : 'Usuario' }}</span>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Main navigation -->
+    <nav class="sidebar-nav">
+      <mat-nav-list>
+        @for (item of navItems; track item.route) {
+          <a
+            mat-list-item
+            [routerLink]="item.route"
+            routerLinkActive="active-item"
+            [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+            (click)="onClose()">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+        }
+      </mat-nav-list>
+    </nav>
+
+    <!-- Admin section -->
+    @if (isAdmin()) {
+      <mat-divider></mat-divider>
+      <div class="sidebar-section-label">Administración</div>
+      <nav class="sidebar-nav">
+        <mat-nav-list>
+          @for (item of adminNavItems; track item.route) {
+            <a
+              mat-list-item
+              [routerLink]="item.route"
+              routerLinkActive="active-item"
+              (click)="onClose()">
+              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+              <span matListItemTitle>{{ item.label }}</span>
+            </a>
+          }
+        </mat-nav-list>
+      </nav>
+    }
+
+    <!-- Spacer -->
+    <div class="sidebar-spacer"></div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Logout -->
+    <div class="sidebar-footer">
+      <button mat-list-item class="logout-btn" (click)="logout()">
+        <mat-icon matListItemIcon>logout</mat-icon>
+        <span matListItemTitle>Cerrar sesión</span>
+      </button>
+    </div>
+
+  </div>
+</aside>

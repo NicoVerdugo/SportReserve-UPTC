@@ -1,1 +1,86 @@
-<p>navbar works!</p>
+<mat-toolbar class="navbar">
+  <!-- Hamburger button (mobile) -->
+  <button
+    mat-icon-button
+    class="menu-btn"
+    aria-label="Abrir menú"
+    (click)="onMenuToggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- Brand / Logo -->
+  <a class="brand" routerLink="/">
+    <mat-icon class="brand-icon">sports_soccer</mat-icon>
+    <span class="brand-text">SportReserve <strong>UPTC</strong></span>
+  </a>
+
+  <span class="spacer"></span>
+
+  <!-- Desktop navigation links -->
+  <nav class="nav-links">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }">
+      Inicio
+    </a>
+    <a
+      mat-button
+      routerLink="/fields"
+      routerLinkActive="active-link">
+      Canchas
+    </a>
+  </nav>
+
+  <!-- Guest actions -->
+  @if (!authService.isAuthenticated()) {
+    <div class="auth-actions">
+      <a mat-button routerLink="/auth/login">Iniciar sesión</a>
+      <a mat-raised-button color="primary" routerLink="/auth/register">Registrarse</a>
+    </div>
+  }
+
+  <!-- Authenticated user menu -->
+  @if (authService.isAuthenticated()) {
+    <div class="user-area">
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Menú de usuario">
+        @if (authService.currentUser()?.avatar) {
+          <img
+            class="user-avatar"
+            [src]="authService.currentUser()!.avatar"
+            [alt]="authService.userFullName()" />
+        } @else {
+          <div class="user-avatar user-avatar--initials">
+            {{ authService.currentUser()?.firstName?.charAt(0) }}{{ authService.currentUser()?.lastName?.charAt(0) }}
+          </div>
+        }
+      </button>
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <div class="user-menu-header" mat-menu-item disabled>
+          <span class="user-menu-name">{{ authService.userFullName() }}</span>
+          <span class="user-menu-email">{{ authService.currentUser()?.email }}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <a mat-menu-item routerLink="/dashboard">
+          <mat-icon>dashboard</mat-icon>
+          Dashboard
+        </a>
+        <a mat-menu-item routerLink="/dashboard/profile">
+          <mat-icon>person</mat-icon>
+          Mi perfil
+        </a>
+        <a mat-menu-item routerLink="/dashboard/reservations">
+          <mat-icon>event</mat-icon>
+          Mis reservas
+        </a>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon color="warn">logout</mat-icon>
+          <span style="color: #f44336">Cerrar sesión</span>
+        </button>
+      </mat-menu>
+    </div>
+  }
+</mat-toolbar>

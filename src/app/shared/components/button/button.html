@@ -1,1 +1,50 @@
-<p>button works!</p>
+@if (variant() === 'raised') {
+  <button
+    mat-raised-button
+    [color]="color()"
+    [disabled]="disabled() || loading()"
+    class="app-btn"
+    (click)="onClick()">
+    @if (loading()) {
+      <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
+    } @else if (icon()) {
+      <mat-icon>{{ icon() }}</mat-icon>
+    }
+    <span [class.btn-label--hidden]="loading()">{{ label() }}</span>
+    <ng-content></ng-content>
+  </button>
+}
+
+@if (variant() === 'stroked') {
+  <button
+    mat-stroked-button
+    [color]="color()"
+    [disabled]="disabled() || loading()"
+    class="app-btn"
+    (click)="onClick()">
+    @if (loading()) {
+      <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
+    } @else if (icon()) {
+      <mat-icon>{{ icon() }}</mat-icon>
+    }
+    <span [class.btn-label--hidden]="loading()">{{ label() }}</span>
+    <ng-content></ng-content>
+  </button>
+}
+
+@if (variant() === 'flat') {
+  <button
+    mat-flat-button
+    [color]="color()"
+    [disabled]="disabled() || loading()"
+    class="app-btn"
+    (click)="onClick()">
+    @if (loading()) {
+      <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
+    } @else if (icon()) {
+      <mat-icon>{{ icon() }}</mat-icon>
+    }
+    <span [class.btn-label--hidden]="loading()">{{ label() }}</span>
+    <ng-content></ng-content>
+  </button>
+}

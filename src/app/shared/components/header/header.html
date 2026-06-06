@@ -1,1 +1,84 @@
-<p>header works!</p>
+<mat-toolbar class="dashboard-header">
+
+  <!-- Hamburger / sidebar toggle -->
+  <button
+    mat-icon-button
+    aria-label="Alternar barra lateral"
+    (click)="onToggleSidebar()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- Page title -->
+  <span class="page-title">{{ title() }}</span>
+
+  <span class="spacer"></span>
+
+  <!-- Notification bell -->
+  <button
+    mat-icon-button
+    aria-label="Notificaciones"
+    routerLink="/dashboard/notifications">
+    @if (notificationCount() > 0) {
+      <mat-icon
+        [matBadge]="notificationCount()"
+        matBadgeColor="warn"
+        matBadgeSize="small">
+        notifications
+      </mat-icon>
+    } @else {
+      <mat-icon>notifications_none</mat-icon>
+    }
+  </button>
+
+  <!-- User avatar + dropdown -->
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="profileMenu"
+    aria-label="Menú de usuario"
+    class="avatar-btn">
+    @if (currentUser()?.avatar) {
+      <img
+        class="header-avatar"
+        [src]="currentUser()!.avatar"
+        [alt]="userFullName()" />
+    } @else {
+      <div class="header-avatar header-avatar--initials">
+        {{ currentUser()?.firstName?.charAt(0) }}{{ currentUser()?.lastName?.charAt(0) }}
+      </div>
+    }
+  </button>
+
+  <mat-menu #profileMenu="matMenu" xPosition="before">
+    <!-- User info header -->
+    <div class="profile-menu-header" mat-menu-item disabled>
+      <span class="profile-menu-name">{{ userFullName() }}</span>
+      <span class="profile-menu-email">{{ currentUser()?.email }}</span>
+      @if (isAdmin()) {
+        <span class="profile-menu-role">Administrador</span>
+      }
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <a mat-menu-item routerLink="/dashboard">
+      <mat-icon>dashboard</mat-icon>
+      Dashboard
+    </a>
+    <a mat-menu-item routerLink="/dashboard/profile">
+      <mat-icon>manage_accounts</mat-icon>
+      Mi perfil
+    </a>
+    <a mat-menu-item routerLink="/dashboard/reservations">
+      <mat-icon>event_note</mat-icon>
+      Mis reservas
+    </a>
+
+    <mat-divider></mat-divider>
+
+    <button mat-menu-item (click)="logout()">
+      <mat-icon color="warn">logout</mat-icon>
+      <span style="color: #f44336">Cerrar sesión</span>
+    </button>
+  </mat-menu>
+
+</mat-toolbar>

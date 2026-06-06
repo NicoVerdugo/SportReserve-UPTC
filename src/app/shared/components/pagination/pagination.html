@@ -1,1 +1,10 @@
-<p>pagination works!</p>
+<mat-paginator
+  class="app-paginator"
+  [length]="totalItems()"
+  [pageSize]="pageSize()"
+  [pageIndex]="pageIndex"
+  [pageSizeOptions]="[5, 10, 25, 50]"
+  [showFirstLastButtons]="true"
+  aria-label="Seleccionar página"
+  (page)="onPageEvent($event)">
+</mat-paginator>

@@ -1,1 +1,8 @@
-<p>loading-spinner works!</p>
+@if (loadingService.isLoading()) {
+  <div class="loading-overlay">
+    <div class="loading-content">
+      <mat-spinner diameter="48" />
+      <span class="loading-text">Cargando...</span>
+    </div>
+  </div>
+}

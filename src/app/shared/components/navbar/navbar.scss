@@ -1,0 +1,134 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  height: 64px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+
+  .menu-btn {
+    display: none;
+    margin-right: 8px;
+
+    @media (max-width: 768px) {
+      display: inline-flex;
+    }
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+
+    .brand-icon {
+      color: #1565c0;
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .brand-text {
+      font-size: 1.1rem;
+      color: #333;
+      white-space: nowrap;
+
+      strong {
+        color: #1565c0;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .spacer {
+    flex: 1;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 8px;
+
+    a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #555;
+      border-radius: 4px;
+      transition: color 0.2s;
+
+      &.active-link {
+        color: #1565c0;
+        background: rgba(21, 101, 192, 0.08);
+      }
+    }
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .auth-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    @media (max-width: 480px) {
+      gap: 4px;
+
+      a[mat-button] {
+        display: none;
+      }
+    }
+  }
+
+  .user-area {
+    display: flex;
+    align-items: center;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #1565c0;
+
+    &--initials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1565c0;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.user-menu-header {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  pointer-events: none;
+
+  .user-menu-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #212121;
+  }
+
+  .user-menu-email {
+    font-size: 0.8rem;
+    color: #757575;
+    margin-top: 2px;
+  }
+}

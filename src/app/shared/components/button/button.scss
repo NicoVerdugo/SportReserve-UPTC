@@ -1,0 +1,38 @@
+:host {
+  display: inline-block;
+}
+
+.app-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 88px;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+}
+
+.btn-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-label--hidden {
+  // Keep the label so the button doesn't shrink, but make it invisible
+  visibility: hidden;
+  width: 0;
+  overflow: hidden;
+  margin: 0;
+}
