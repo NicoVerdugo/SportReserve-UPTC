@@ -1,1 +1,5 @@
-<p>public-layout works!</p>
+<app-navbar (menuToggle)="menuOpen.set(!menuOpen())" />
+<main class="public-main">
+  <router-outlet />
+</main>
+<app-footer />

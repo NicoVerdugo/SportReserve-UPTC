@@ -1,1 +1,9 @@
-<p>admin-layout works!</p>
+<div class="admin-layout" [class.sidebar-open]="sidebarOpen()">
+  <app-sidebar [isOpen]="sidebarOpen()" (closeSidebar)="sidebarOpen.set(false)" />
+  <div class="admin-content">
+    <app-header (sidebarToggle)="toggleSidebar()" />
+    <main class="admin-main">
+      <router-outlet />
+    </main>
+  </div>
+</div>

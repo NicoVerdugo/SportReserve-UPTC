@@ -1,0 +1,92 @@
+$sidebar-width: 260px;
+$sidebar-transition: 280ms cubic-bezier(0.4, 0, 0.2, 1);
+$header-height: 64px;
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// ─── Main grid ──────────────────────────────────────────────────────────────
+.admin-layout {
+  display: grid;
+  grid-template-columns: 0 1fr;
+  grid-template-rows: 1fr;
+  min-height: 100vh;
+  transition: grid-template-columns $sidebar-transition;
+
+  &.sidebar-open {
+    grid-template-columns: $sidebar-width 1fr;
+  }
+
+  app-sidebar {
+    grid-column: 1;
+    grid-row: 1;
+    overflow: hidden;
+    width: $sidebar-width;
+    transition: transform $sidebar-transition;
+    transform: translateX(-100%);
+    z-index: 200;
+  }
+
+  &.sidebar-open app-sidebar {
+    transform: translateX(0);
+  }
+}
+
+// ─── Content area ───────────────────────────────────────────────────────────
+.admin-content {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; // prevent overflow in grid
+  min-height: 100vh;
+
+  app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: $header-height;
+    flex-shrink: 0;
+  }
+}
+
+.admin-main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background: #f5f7fa;
+}
+
+// ─── Mobile: sidebar as overlay ─────────────────────────────────────────────
+@media (max-width: 959px) {
+  .admin-layout {
+    grid-template-columns: 1fr !important;
+
+    app-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
+    }
+
+    // Backdrop when sidebar is open on mobile
+    &.sidebar-open::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 199;
+    }
+  }
+
+  .admin-content {
+    grid-column: 1;
+  }
+
+  .admin-main {
+    padding: 16px;
+  }
+}
