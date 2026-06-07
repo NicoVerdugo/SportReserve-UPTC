@@ -1,8 +1,19 @@
+/**
+ * @file auth.controller.ts
+ * @description Controlador de autenticación. Recibe las peticiones HTTP, llama al servicio
+ * correspondiente y devuelve la respuesta al cliente. No contiene lógica de negocio.
+ */
+
 import { Request, Response, NextFunction } from 'express';
 import { AuthRequest } from '../../interfaces';
 import * as authService from './auth.service';
 import { successResponse, errorResponse } from '../../utils/response.utils';
 
+/**
+ * POST /api/auth/register
+ * Registra un nuevo usuario en la plataforma.
+ * Espera en el body: firstName, lastName, email, password, confirmPassword, phone (opcional).
+ */
 export const register = async (
   req: Request,
   res: Response,
@@ -16,6 +27,11 @@ export const register = async (
   }
 };
 
+/**
+ * POST /api/auth/login
+ * Inicia sesión con email y contraseña.
+ * Retorna el usuario autenticado junto con los tokens JWT de acceso y refresco.
+ */
 export const login = async (
   req: Request,
   res: Response,
@@ -29,20 +45,30 @@ export const login = async (
   }
 };
 
+/**
+ * POST /api/auth/logout
+ * Cierra la sesión del usuario autenticado.
+ * En esta implementación stateless con JWT, el cierre de sesión se maneja en el cliente.
+ * Requiere token JWT en el header Authorization.
+ */
 export const logout = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    // In a stateless JWT setup, logout is handled on the client side
-    // For refresh token invalidation, we acknowledge receipt
+    // En JWT stateless el logout lo maneja el cliente eliminando el token
     successResponse(res, null, 'Logged out successfully');
   } catch (error) {
     next(error);
   }
 };
 
+/**
+ * POST /api/auth/refresh-token
+ * Renueva el access token usando un refresh token válido.
+ * Espera en el body: refreshToken (string).
+ */
 export const refreshToken = async (
   req: Request,
   res: Response,
@@ -57,6 +83,12 @@ export const refreshToken = async (
   }
 };
 
+/**
+ * POST /api/auth/forgot-password
+ * Solicita el envío de un correo para recuperar la contraseña.
+ * Espera en el body: email (string).
+ * Siempre responde con éxito para evitar revelar si el email existe.
+ */
 export const forgotPassword = async (
   req: Request,
   res: Response,
@@ -74,6 +106,11 @@ export const forgotPassword = async (
   }
 };
 
+/**
+ * POST /api/auth/reset-password
+ * Restablece la contraseña usando el token recibido por correo.
+ * Espera en el body: token (string), password (string), confirmPassword (string).
+ */
 export const resetPassword = async (
   req: Request,
   res: Response,
@@ -88,6 +125,11 @@ export const resetPassword = async (
   }
 };
 
+/**
+ * GET /api/auth/me
+ * Retorna el perfil del usuario actualmente autenticado.
+ * Requiere token JWT en el header Authorization.
+ */
 export const getMe = async (
   req: AuthRequest,
   res: Response,
@@ -105,6 +147,12 @@ export const getMe = async (
   }
 };
 
+/**
+ * PUT /api/auth/me
+ * Actualiza los datos del perfil del usuario autenticado.
+ * Campos permitidos en el body: firstName, lastName, phone, avatar (todos opcionales).
+ * Requiere token JWT en el header Authorization.
+ */
 export const updateMe = async (
   req: AuthRequest,
   res: Response,
@@ -122,6 +170,12 @@ export const updateMe = async (
   }
 };
 
+/**
+ * PUT /api/auth/change-password
+ * Cambia la contraseña del usuario autenticado.
+ * Espera en el body: currentPassword (string), newPassword (string).
+ * Requiere token JWT en el header Authorization.
+ */
 export const changePassword = async (
   req: AuthRequest,
   res: Response,

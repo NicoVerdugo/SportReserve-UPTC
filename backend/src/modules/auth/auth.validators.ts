@@ -1,5 +1,24 @@
+/**
+ * @file auth.validators.ts
+ * @description Validadores del módulo de autenticación usando express-validator.
+ * Cada validador es un array de reglas que se ejecutan antes del controlador
+ * para verificar que los datos del body sean correctos.
+ */
+
 import { body } from 'express-validator';
 
+/**
+ * Validaciones para el registro de un nuevo usuario.
+ * Campos requeridos: firstName, lastName, email, password, confirmPassword.
+ * Campo opcional: phone.
+ *
+ * Reglas:
+ * - firstName y lastName: solo letras (incluyendo tildes y ñ), entre 2 y 50 caracteres
+ * - email: formato válido de correo electrónico
+ * - password: mínimo 8 caracteres, debe tener mayúscula, minúscula y número
+ * - confirmPassword: debe coincidir con password
+ * - phone: formato internacional opcional (ej: +57 300 123 4567)
+ */
 export const registerValidator = [
   body('firstName')
     .trim()
@@ -41,6 +60,10 @@ export const registerValidator = [
     .matches(/^\+?[\d\s\-()]{7,20}$/).withMessage('Please provide a valid phone number'),
 ];
 
+/**
+ * Validaciones para el inicio de sesión.
+ * Campos requeridos: email, password.
+ */
 export const loginValidator = [
   body('email')
     .trim()
@@ -52,6 +75,10 @@ export const loginValidator = [
     .notEmpty().withMessage('Password is required'),
 ];
 
+/**
+ * Validaciones para solicitar recuperación de contraseña.
+ * Campo requerido: email con formato válido.
+ */
 export const forgotPasswordValidator = [
   body('email')
     .trim()
@@ -60,6 +87,15 @@ export const forgotPasswordValidator = [
     .normalizeEmail(),
 ];
 
+/**
+ * Validaciones para restablecer la contraseña con token.
+ * Campos requeridos: token, password, confirmPassword.
+ *
+ * Reglas:
+ * - token: no puede estar vacío
+ * - password: mínimo 8 caracteres, debe tener mayúscula, minúscula y número
+ * - confirmPassword: debe coincidir con password
+ */
 export const resetPasswordValidator = [
   body('token')
     .trim()
@@ -82,6 +118,15 @@ export const resetPasswordValidator = [
     }),
 ];
 
+/**
+ * Validaciones para actualizar el perfil propio.
+ * Todos los campos son opcionales.
+ *
+ * Reglas:
+ * - firstName y lastName: solo letras, entre 2 y 50 caracteres
+ * - phone: formato internacional válido
+ * - avatar: debe ser una URL válida
+ */
 export const updateMeValidator = [
   body('firstName')
     .optional()
@@ -106,6 +151,15 @@ export const updateMeValidator = [
     .isURL().withMessage('Avatar must be a valid URL'),
 ];
 
+/**
+ * Validaciones para cambiar la contraseña del usuario autenticado.
+ * Campos requeridos: currentPassword, newPassword, confirmPassword.
+ *
+ * Reglas:
+ * - currentPassword: no puede estar vacío
+ * - newPassword: mínimo 8 caracteres, debe tener mayúscula, minúscula y número
+ * - confirmPassword: debe coincidir con newPassword
+ */
 export const changePasswordValidator = [
   body('currentPassword')
     .notEmpty().withMessage('Current password is required'),
@@ -127,6 +181,10 @@ export const changePasswordValidator = [
     }),
 ];
 
+/**
+ * Validaciones para renovar el access token.
+ * Campo requerido: refreshToken (string no vacío).
+ */
 export const refreshTokenValidator = [
   body('refreshToken')
     .trim()

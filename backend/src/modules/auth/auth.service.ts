@@ -1,3 +1,9 @@
+/**
+ * @file auth.service.ts
+ * @description Servicio de autenticación. Contiene la lógica de negocio para registro,
+ * inicio de sesión, manejo de tokens, recuperación de contraseña y gestión del perfil propio.
+ */
+
 import crypto from 'crypto';
 import User from '../users/user.model';
 import { IUser } from '../../interfaces';
@@ -8,19 +14,24 @@ import {
 } from '../../utils/jwt.utils';
 import { sendPasswordResetEmail } from '../../utils/email.utils';
 
+// ─── DTOs (Data Transfer Objects) ────────────────────────────────────────────
+
+/** Datos requeridos para registrar un nuevo usuario */
 export interface RegisterDto {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  phone?: string;
+  phone?: string; // Opcional
 }
 
+/** Datos requeridos para iniciar sesión */
 export interface LoginDto {
   email: string;
   password: string;
 }
 
+/** Datos opcionales para actualizar el perfil propio */
 export interface UpdateMeDto {
   firstName?: string;
   lastName?: string;
@@ -28,22 +39,33 @@ export interface UpdateMeDto {
   avatar?: string;
 }
 
+/** Datos requeridos para cambiar la contraseña */
 export interface ChangePasswordDto {
   currentPassword: string;
   newPassword: string;
 }
 
+/** Par de tokens JWT generados tras autenticación */
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
 }
 
+/** Respuesta estándar tras registro o login exitoso */
 export interface AuthResponse {
-  user: Omit<IUser, 'password'>;
+  user: Omit<IUser, 'password'>; // El usuario sin la contraseña
   accessToken: string;
   refreshToken: string;
 }
 
+// ─── Utilidad interna ─────────────────────────────────────────────────────────
+
+/**
+ * Elimina campos sensibles del objeto usuario antes de enviarlo al cliente.
+ * Remueve: password, resetPasswordToken, resetPasswordExpires.
+ * @param user - Documento de usuario de Mongoose
+ * @returns Objeto usuario sin campos sensibles
+ */
 const sanitizeUser = (user: IUser) => {
   const userObj = user.toObject() as Record<string, unknown>;
   delete userObj['password'];
@@ -52,6 +74,17 @@ const sanitizeUser = (user: IUser) => {
   return userObj;
 };
 
+// ─── Funciones del servicio ───────────────────────────────────────────────────
+
+/**
+ * Registra un nuevo usuario en la plataforma.
+ * Verifica que el email no esté ya registrado, crea el usuario
+ * y genera tokens JWT de acceso y refresco.
+ *
+ * @param dto - Datos del nuevo usuario (nombre, email, contraseña, etc.)
+ * @returns Usuario creado (sin contraseña) y tokens JWT
+ * @throws 409 si el email ya está registrado
+ */
 export const register = async (dto: RegisterDto): Promise<AuthResponse> => {
   const existingUser = await User.findOne({ email: dto.email.toLowerCase() });
   if (existingUser) {
@@ -76,6 +109,16 @@ export const register = async (dto: RegisterDto): Promise<AuthResponse> => {
   };
 };
 
+/**
+ * Autentica a un usuario con email y contraseña.
+ * Verifica que el usuario exista, que su cuenta esté activa
+ * y que la contraseña sea correcta.
+ *
+ * @param dto - Credenciales del usuario (email y contraseña)
+ * @returns Usuario autenticado (sin contraseña) y tokens JWT
+ * @throws 401 si las credenciales son inválidas
+ * @throws 403 si la cuenta está bloqueada o inactiva
+ */
 export const login = async (dto: LoginDto): Promise<AuthResponse> => {
   const user = await User.findOne({ email: dto.email.toLowerCase() }).select('+password');
 
@@ -108,6 +151,15 @@ export const login = async (dto: LoginDto): Promise<AuthResponse> => {
   };
 };
 
+/**
+ * Renueva el access token usando un refresh token válido.
+ * Verifica que el token sea válido y que el usuario exista y esté activo.
+ *
+ * @param token - Refresh token JWT
+ * @returns Nuevos tokens de acceso y refresco
+ * @throws 401 si el token es inválido o el usuario no existe
+ * @throws 403 si la cuenta no está activa
+ */
 export const refreshToken = async (token: string): Promise<AuthTokens> => {
   const decoded = verifyRefreshToken(token);
 
@@ -126,22 +178,32 @@ export const refreshToken = async (token: string): Promise<AuthTokens> => {
   return { accessToken, refreshToken: newRefreshToken };
 };
 
+/**
+ * Inicia el proceso de recuperación de contraseña.
+ * Genera un token seguro, lo guarda hasheado en la base de datos
+ * y envía un correo al usuario con el enlace de recuperación.
+ * Nota: siempre responde con éxito para evitar enumeración de emails.
+ *
+ * @param email - Correo del usuario que quiere recuperar su contraseña
+ * @throws 500 si falla el envío del correo
+ */
 export const forgotPassword = async (email: string): Promise<void> => {
   const user = await User.findOne({ email: email.toLowerCase() });
 
-  // Always return success to prevent email enumeration
+  // Siempre retorna éxito para evitar revelar si el email existe
   if (!user) return;
 
   const resetToken = crypto.randomBytes(32).toString('hex');
   const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
   user.resetPasswordToken = hashedToken;
-  user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+  user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // Expira en 1 hora
   await user.save({ validateBeforeSave: false });
 
   try {
     await sendPasswordResetEmail(user.email, resetToken, user.firstName);
   } catch {
+    // Si falla el correo, limpia el token para no dejarlo huérfano
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save({ validateBeforeSave: false });
@@ -151,6 +213,14 @@ export const forgotPassword = async (email: string): Promise<void> => {
   }
 };
 
+/**
+ * Restablece la contraseña de un usuario usando el token de recuperación.
+ * Verifica que el token sea válido y no haya expirado.
+ *
+ * @param token - Token de recuperación enviado por correo (sin hashear)
+ * @param newPassword - Nueva contraseña del usuario
+ * @throws 400 si el token es inválido o ha expirado
+ */
 export const resetPassword = async (
   token: string,
   newPassword: string
@@ -159,7 +229,7 @@ export const resetPassword = async (
 
   const user = await User.findOne({
     resetPasswordToken: hashedToken,
-    resetPasswordExpires: { $gt: new Date() },
+    resetPasswordExpires: { $gt: new Date() }, // Token aún vigente
   }).select('+resetPasswordToken +resetPasswordExpires');
 
   if (!user) {
@@ -172,6 +242,13 @@ export const resetPassword = async (
   await user.save();
 };
 
+/**
+ * Obtiene el perfil del usuario autenticado actualmente.
+ *
+ * @param userId - ID del usuario autenticado
+ * @returns Datos del usuario sin campos sensibles
+ * @throws 404 si el usuario no existe
+ */
 export const getMe = async (userId: string): Promise<Omit<IUser, 'password'>> => {
   const user = await User.findById(userId);
   if (!user) {
@@ -180,6 +257,15 @@ export const getMe = async (userId: string): Promise<Omit<IUser, 'password'>> =>
   return sanitizeUser(user) as unknown as Omit<IUser, 'password'>;
 };
 
+/**
+ * Actualiza los datos del perfil del usuario autenticado.
+ * Solo permite modificar: nombre, apellido, teléfono y avatar.
+ *
+ * @param userId - ID del usuario autenticado
+ * @param dto - Campos a actualizar (todos opcionales)
+ * @returns Usuario actualizado sin campos sensibles
+ * @throws 404 si el usuario no existe
+ */
 export const updateMe = async (
   userId: string,
   dto: UpdateMeDto
@@ -202,6 +288,15 @@ export const updateMe = async (
   return sanitizeUser(user) as unknown as Omit<IUser, 'password'>;
 };
 
+/**
+ * Cambia la contraseña del usuario autenticado.
+ * Verifica que la contraseña actual sea correcta antes de actualizarla.
+ *
+ * @param userId - ID del usuario autenticado
+ * @param dto - Contraseña actual y nueva contraseña
+ * @throws 404 si el usuario no existe
+ * @throws 400 si la contraseña actual es incorrecta
+ */
 export const changePassword = async (
   userId: string,
   dto: ChangePasswordDto

@@ -1,3 +1,13 @@
+/**
+ * @file auth.routes.ts
+ * @description Rutas del módulo de autenticación.
+ * Define los endpoints públicos y protegidos para registro, login,
+ * manejo de tokens y gestión del perfil propio.
+ * Incluye documentación Swagger/OpenAPI para cada ruta.
+ *
+ * Base path: /api/auth
+ */
+
 import { Router } from 'express';
 import * as authController from './auth.controller';
 import { authenticate } from '../../middleware/auth.middleware';
@@ -14,11 +24,13 @@ import {
 
 const router = Router();
 
+// ─── Rutas públicas (no requieren autenticación) ──────────────────────────────
+
 /**
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: Register a new user
+ *     summary: Registrar un nuevo usuario
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -43,11 +55,11 @@ const router = Router();
  *                 type: string
  *     responses:
  *       201:
- *         description: User registered successfully
+ *         description: Usuario registrado exitosamente
  *       400:
- *         description: Validation error
+ *         description: Error de validación en los datos enviados
  *       409:
- *         description: Email already registered
+ *         description: El email ya está registrado
  */
 router.post('/register', registerValidator, validateRequest, authController.register);
 
@@ -55,7 +67,7 @@ router.post('/register', registerValidator, validateRequest, authController.regi
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Login user
+ *     summary: Iniciar sesión
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -72,31 +84,19 @@ router.post('/register', registerValidator, validateRequest, authController.regi
  *                 type: string
  *     responses:
  *       200:
- *         description: Login successful
+ *         description: Login exitoso, retorna usuario y tokens JWT
  *       401:
- *         description: Invalid credentials
+ *         description: Credenciales inválidas
+ *       403:
+ *         description: Cuenta bloqueada o inactiva
  */
 router.post('/login', loginValidator, validateRequest, authController.login);
 
 /**
  * @swagger
- * /api/auth/logout:
- *   post:
- *     summary: Logout user
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Logged out successfully
- */
-router.post('/logout', authenticate, authController.logout);
-
-/**
- * @swagger
  * /api/auth/refresh-token:
  *   post:
- *     summary: Refresh access token
+ *     summary: Renovar access token
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -110,7 +110,9 @@ router.post('/logout', authenticate, authController.logout);
  *                 type: string
  *     responses:
  *       200:
- *         description: Tokens refreshed
+ *         description: Tokens renovados exitosamente
+ *       401:
+ *         description: Refresh token inválido o expirado
  */
 router.post(
   '/refresh-token',
@@ -123,7 +125,7 @@ router.post(
  * @swagger
  * /api/auth/forgot-password:
  *   post:
- *     summary: Request password reset
+ *     summary: Solicitar recuperación de contraseña
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -138,7 +140,7 @@ router.post(
  *                 format: email
  *     responses:
  *       200:
- *         description: Reset email sent if account exists
+ *         description: Correo enviado si la cuenta existe (siempre responde 200)
  */
 router.post(
   '/forgot-password',
@@ -151,7 +153,7 @@ router.post(
  * @swagger
  * /api/auth/reset-password:
  *   post:
- *     summary: Reset password with token
+ *     summary: Restablecer contraseña con token
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -169,7 +171,9 @@ router.post(
  *                 type: string
  *     responses:
  *       200:
- *         description: Password reset successfully
+ *         description: Contraseña restablecida exitosamente
+ *       400:
+ *         description: Token inválido o expirado
  */
 router.post(
   '/reset-password',
@@ -178,17 +182,37 @@ router.post(
   authController.resetPassword
 );
 
+// ─── Rutas protegidas (requieren token JWT) ───────────────────────────────────
+
 /**
  * @swagger
- * /api/auth/me:
- *   get:
- *     summary: Get current user profile
+ * /api/auth/logout:
+ *   post:
+ *     summary: Cerrar sesión
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User profile
+ *         description: Sesión cerrada exitosamente
+ *       401:
+ *         description: Token no proporcionado o inválido
+ */
+router.post('/logout', authenticate, authController.logout);
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Obtener perfil del usuario autenticado
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Datos del perfil del usuario
+ *       401:
+ *         description: Token no proporcionado o inválido
  */
 router.get('/me', authenticate, authController.getMe);
 
@@ -196,13 +220,29 @@ router.get('/me', authenticate, authController.getMe);
  * @swagger
  * /api/auth/me:
  *   put:
- *     summary: Update current user profile
+ *     summary: Actualizar perfil del usuario autenticado
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               avatar:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Profile updated
+ *         description: Perfil actualizado exitosamente
+ *       401:
+ *         description: Token no proporcionado o inválido
  */
 router.put('/me', authenticate, updateMeValidator, validateRequest, authController.updateMe);
 
@@ -210,13 +250,29 @@ router.put('/me', authenticate, updateMeValidator, validateRequest, authControll
  * @swagger
  * /api/auth/change-password:
  *   put:
- *     summary: Change user password
+ *     summary: Cambiar contraseña del usuario autenticado
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [currentPassword, newPassword]
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Password changed
+ *         description: Contraseña cambiada exitosamente
+ *       400:
+ *         description: Contraseña actual incorrecta
+ *       401:
+ *         description: Token no proporcionado o inválido
  */
 router.put(
   '/change-password',
