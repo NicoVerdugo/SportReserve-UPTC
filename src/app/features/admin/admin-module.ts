@@ -1,14 +1,3 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { AdminRoutingModule } from './admin-routing-module';
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    AdminRoutingModule
-  ]
-})
-export class AdminModule { }
+// Standalone/signals architecture — lazy loading is handled via AdminRoutingModule routes.
+// This file is kept for compatibility; no NgModule is needed.
+export const AdminModule = [];

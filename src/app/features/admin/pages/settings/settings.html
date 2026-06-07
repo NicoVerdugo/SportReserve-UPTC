@@ -1,1 +1,96 @@
-<p>settings works!</p>
+<div class="settings-page">
+  <div class="settings-container">
+
+    <h1 class="page-title">
+      <mat-icon>settings</mat-icon>
+      Configuración del Sistema
+    </h1>
+
+    <!-- General -->
+    <mat-card class="settings-card">
+      <div class="card-header">
+        <mat-icon class="card-icon">tune</mat-icon>
+        <div>
+          <h2>General</h2>
+          <p>Configuración básica de la aplicación</p>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="card-body">
+        <mat-form-field appearance="outline" class="settings-field">
+          <mat-label>Nombre de la aplicación</mat-label>
+          <input matInput [(ngModel)]="appName" />
+          <mat-icon matPrefix>label</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="settings-field">
+          <mat-label>Versión</mat-label>
+          <input matInput [value]="appVersion" readonly />
+          <mat-icon matPrefix>info</mat-icon>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="onSave()">
+          <mat-icon>save</mat-icon>
+          Guardar cambios
+        </button>
+      </div>
+    </mat-card>
+
+    <!-- Email -->
+    <mat-card class="settings-card">
+      <div class="card-header">
+        <mat-icon class="card-icon card-icon-email">email</mat-icon>
+        <div>
+          <h2>Configuración de Email</h2>
+          <p>Servidor SMTP para notificaciones</p>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="card-body">
+        <div class="coming-soon-banner">
+          <mat-icon>construction</mat-icon>
+          <span>Configuración de email disponible próximamente</span>
+        </div>
+      </div>
+    </mat-card>
+
+    <!-- Rate Limits -->
+    <mat-card class="settings-card">
+      <div class="card-header">
+        <mat-icon class="card-icon card-icon-rate">speed</mat-icon>
+        <div>
+          <h2>Límites de Uso</h2>
+          <p>Control de tasa de solicitudes a la API</p>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Máx. solicitudes/min</span>
+            <span class="info-value">100</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Máx. reservas/usuario/día</span>
+            <span class="info-value">5</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Tiempo de sesión</span>
+            <span class="info-value">24 horas</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Estado del servidor</span>
+            <span class="info-value info-value-ok">
+              <mat-icon>check_circle</mat-icon> Operativo
+            </span>
+          </div>
+        </div>
+        <div class="coming-soon-banner">
+          <mat-icon>construction</mat-icon>
+          <span>Edición de límites disponible próximamente</span>
+        </div>
+      </div>
+    </mat-card>
+
+  </div>
+</div>

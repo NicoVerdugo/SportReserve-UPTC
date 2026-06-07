@@ -1,1 +1,26 @@
-<p>field-settings works!</p>
+<mat-card class="field-settings-card">
+  <div class="card-header">
+    <mat-icon>settings</mat-icon>
+    <h3>Configuración de Cancha</h3>
+  </div>
+
+  @if (field()) {
+    <div class="field-info">
+      <p class="field-name">{{ field()!.name }}</p>
+      <span class="field-status" [class.active]="field()!.status === 'active'">
+        {{ field()!.status === 'active' ? 'Activa' : 'Inactiva' }}
+      </span>
+    </div>
+
+    <mat-divider />
+
+    <div class="settings-actions">
+      <button mat-stroked-button color="primary" (click)="onSave({ status: field()!.status === 'active' ? 'inactive' : 'active' })">
+        <mat-icon>{{ field()!.status === 'active' ? 'block' : 'check_circle' }}</mat-icon>
+        {{ field()!.status === 'active' ? 'Desactivar' : 'Activar' }}
+      </button>
+    </div>
+  } @else {
+    <p class="no-field">Selecciona una cancha para ver su configuración.</p>
+  }
+</mat-card>

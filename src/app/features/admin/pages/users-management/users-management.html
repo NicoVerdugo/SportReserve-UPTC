@@ -1,1 +1,46 @@
-<p>users-management works!</p>
+<div class="users-management-page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <mat-icon>people</mat-icon>
+        Gestión de Usuarios
+      </h1>
+      <span class="total-badge">{{ pagination().total }} usuarios</span>
+    </div>
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar usuario</mat-label>
+      <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Nombre, correo..." />
+      <button mat-icon-button matSuffix (click)="onSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <mat-card class="table-card">
+    @if (loading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Cargando usuarios...</p>
+      </div>
+    } @else {
+      <app-user-table
+        [users]="users()"
+        (editUser)="onEdit($event)"
+        (deleteUser)="onDelete($event)"
+        (toggleStatus)="onToggleStatus($event)">
+      </app-user-table>
+
+      <mat-paginator
+        [length]="pagination().total"
+        [pageSize]="pagination().limit"
+        [pageIndex]="pagination().page - 1"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    }
+  </mat-card>
+
+</div>

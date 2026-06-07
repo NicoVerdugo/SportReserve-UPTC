@@ -1,1 +1,73 @@
-<p>user-form works!</p>
+<h2 mat-dialog-title>
+  <mat-icon>edit</mat-icon>
+  Editar Usuario
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="user-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-field">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="firstName" />
+        @if (form.get('firstName')?.hasError('required') && form.get('firstName')?.touched) {
+          <mat-error>Requerido</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-field">
+        <mat-label>Apellido</mat-label>
+        <input matInput formControlName="lastName" />
+        @if (form.get('lastName')?.hasError('required') && form.get('lastName')?.touched) {
+          <mat-error>Requerido</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-field">
+      <mat-label>Correo electrónico</mat-label>
+      <input matInput formControlName="email" type="email" />
+      <mat-icon matPrefix>email</mat-icon>
+      @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+        <mat-error>El correo es requerido</mat-error>
+      }
+      @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+        <mat-error>Correo inválido</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-field">
+      <mat-label>Teléfono</mat-label>
+      <input matInput formControlName="phone" type="tel" />
+      <mat-icon matPrefix>phone</mat-icon>
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-field">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="role">
+          <mat-option value="USER">Usuario</mat-option>
+          <mat-option value="ADMIN">Administrador</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>badge</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-field">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="active">Activo</mat-option>
+          <mat-option value="inactive">Inactivo</mat-option>
+          <mat-option value="blocked">Bloqueado</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>toggle_on</mat-icon>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSave()">
+    <mat-icon>save</mat-icon>
+    Guardar
+  </button>
+</mat-dialog-actions>

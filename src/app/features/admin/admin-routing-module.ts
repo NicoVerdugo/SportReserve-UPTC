@@ -1,10 +1,24 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class AdminRoutingModule { }
+export const AdminRoutingModule: Routes = [
+  {
+    path: '',
+    redirectTo: 'users',
+    pathMatch: 'full',
+  },
+  {
+    path: 'users',
+    loadComponent: () =>
+      import('./pages/users-management/users-management').then(m => m.UsersManagement),
+  },
+  {
+    path: 'fields',
+    loadComponent: () =>
+      import('./pages/fields-management/fields-management').then(m => m.FieldsManagement),
+  },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/settings/settings').then(m => m.Settings),
+  },
+];

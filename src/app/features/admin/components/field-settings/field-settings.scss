@@ -1,0 +1,46 @@
+.field-settings-card {
+  padding: 20px;
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+
+    mat-icon { color: var(--sr-primary); }
+    h3 { margin: 0; font-size: 16px; font-weight: 600; }
+  }
+
+  .field-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    .field-name { font-weight: 500; font-size: 15px; margin: 0; }
+
+    .field-status {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      background: #ffebee;
+      color: #c62828;
+
+      &.active { background: #e8f5e9; color: #2e7d32; }
+    }
+  }
+
+  .settings-actions {
+    padding-top: 16px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .no-field {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 24px 0;
+  }
+}

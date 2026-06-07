@@ -1,0 +1,48 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+mat-dialog-content {
+  min-width: 480px;
+  padding-top: 16px !important;
+
+  @media (max-width: 600px) {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.half-field {
+  flex: 1;
+  width: 100%;
+}
+
+.full-field {
+  width: 100%;
+  display: block;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px !important;
+  gap: 8px;
+}
