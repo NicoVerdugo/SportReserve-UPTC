@@ -1,1 +1,95 @@
-<p>payment-history works!</p>
+<div class="payment-history-page">
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>receipt_long</mat-icon>
+      Historial de Pagos
+    </h1>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button class="filter-tab" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
+      Todos
+    </button>
+    <button class="filter-tab" [class.active]="activeFilter() === 'paid'" (click)="setFilter('paid')">
+      Pagados
+    </button>
+    <button class="filter-tab" [class.active]="activeFilter() === 'pending'" (click)="setFilter('pending')">
+      Pendientes
+    </button>
+    <button class="filter-tab" [class.active]="activeFilter() === 'rejected'" (click)="setFilter('rejected')">
+      Rechazados
+    </button>
+  </div>
+
+  <mat-card class="table-card">
+    @if (loading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Cargando pagos...</p>
+      </div>
+    } @else if (filteredPayments().length === 0) {
+      <div class="empty-state">
+        <mat-icon>receipt_long</mat-icon>
+        <h3>Sin pagos</h3>
+        <p>No se encontraron pagos con el filtro seleccionado.</p>
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="filteredPayments()" class="payments-table">
+
+          <ng-container matColumnDef="reserva">
+            <th mat-header-cell *matHeaderCellDef>Reserva</th>
+            <td mat-cell *matCellDef="let payment">
+              <span class="reservation-id">#{{ payment.reservationId | slice:0:8 }}...</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+            <td mat-cell *matCellDef="let payment">{{ formatDate(payment.createdAt) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="monto">
+            <th mat-header-cell *matHeaderCellDef>Monto</th>
+            <td mat-cell *matCellDef="let payment">
+              <span class="payment-amount">${{ payment.amount | number:'1.0-0' }} {{ payment.currency }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="metodo">
+            <th mat-header-cell *matHeaderCellDef>Método</th>
+            <td mat-cell *matCellDef="let payment">{{ getMethodLabel(payment.method) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let payment">
+              <span class="status-badge"
+                [class.status-paid]="payment.status === 'paid'"
+                [class.status-pending]="payment.status === 'pending'"
+                [class.status-rejected]="payment.status === 'rejected'"
+                [class.status-refunded]="payment.status === 'refunded'">
+                {{ getStatusLabel(payment.status) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="comprobante">
+            <th mat-header-cell *matHeaderCellDef>Comprobante</th>
+            <td mat-cell *matCellDef="let payment">
+              <button mat-stroked-button (click)="viewReceipt(payment)"
+                [disabled]="payment.status !== 'paid'" matTooltip="Ver comprobante">
+                <mat-icon>download</mat-icon>
+                Ver
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="payment-row"></tr>
+        </table>
+      </div>
+    }
+  </mat-card>
+</div>

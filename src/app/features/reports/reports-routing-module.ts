@@ -1,10 +1,14 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class ReportsRoutingModule { }
+export const ReportsRoutingModule: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./pages/reports-dashboard/reports-dashboard').then(m => m.ReportsDashboard),
+  },
+  {
+    path: ':type',
+    loadComponent: () =>
+      import('./pages/report-detail/report-detail').then(m => m.ReportDetail),
+  },
+];

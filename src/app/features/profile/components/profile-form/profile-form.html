@@ -1,1 +1,36 @@
-<p>profile-form works!</p>
+<div [formGroup]="form()" class="profile-form">
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="half-field">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="firstName" placeholder="Tu nombre" />
+      <mat-icon matPrefix>person</mat-icon>
+      @if (form().get('firstName')?.hasError('required') && (form().get('firstName')?.touched || submitted())) {
+        <mat-error>El nombre es requerido</mat-error>
+      }
+      @if (form().get('firstName')?.hasError('minlength') && (form().get('firstName')?.touched || submitted())) {
+        <mat-error>Mínimo 2 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-field">
+      <mat-label>Apellido</mat-label>
+      <input matInput formControlName="lastName" placeholder="Tu apellido" />
+      <mat-icon matPrefix>person</mat-icon>
+      @if (form().get('lastName')?.hasError('required') && (form().get('lastName')?.touched || submitted())) {
+        <mat-error>El apellido es requerido</mat-error>
+      }
+      @if (form().get('lastName')?.hasError('minlength') && (form().get('lastName')?.touched || submitted())) {
+        <mat-error>Mínimo 2 caracteres</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-field">
+    <mat-label>Teléfono (opcional)</mat-label>
+    <input matInput formControlName="phone" placeholder="+57 300 000 0000" type="tel" />
+    <mat-icon matPrefix>phone</mat-icon>
+    @if (form().get('phone')?.hasError('pattern') && (form().get('phone')?.touched || submitted())) {
+      <mat-error>Número de teléfono inválido</mat-error>
+    }
+  </mat-form-field>
+</div>

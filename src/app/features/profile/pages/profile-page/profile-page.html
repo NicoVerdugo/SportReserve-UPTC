@@ -1,1 +1,82 @@
-<p>profile-page works!</p>
+<div class="profile-page">
+  <div class="profile-container">
+
+    @if (user()) {
+      <!-- Profile Card -->
+      <mat-card class="profile-card">
+        <div class="profile-header">
+          <div class="avatar-container">
+            @if (user()?.avatar) {
+              <img [src]="user()!.avatar" [alt]="fullName()" class="avatar-img" />
+            } @else {
+              <div class="avatar-initials">{{ initials() }}</div>
+            }
+          </div>
+
+          <div class="profile-info">
+            <h1 class="profile-name">{{ fullName() }}</h1>
+            <p class="profile-email">{{ user()?.email }}</p>
+
+            <div class="profile-badges">
+              <span class="badge badge-role" [class.badge-admin]="user()?.role === 'ADMIN'">
+                {{ roleLabel() }}
+              </span>
+              <span class="badge badge-status" [class.badge-active]="user()?.status === 'active'">
+                {{ statusLabel() }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="profile-details">
+          @if (user()?.phone) {
+            <div class="detail-row">
+              <span class="material-icons detail-icon">phone</span>
+              <div>
+                <span class="detail-label">Teléfono</span>
+                <span class="detail-value">{{ user()?.phone }}</span>
+              </div>
+            </div>
+          }
+
+          <div class="detail-row">
+            <span class="material-icons detail-icon">calendar_today</span>
+            <div>
+              <span class="detail-label">Miembro desde</span>
+              <span class="detail-value">{{ memberSince() }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="material-icons detail-icon">email</span>
+            <div>
+              <span class="detail-label">Correo electrónico</span>
+              <span class="detail-value">{{ user()?.email }}</span>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="profile-actions">
+          <button mat-raised-button color="primary" (click)="onEditProfile()">
+            <span class="material-icons">edit</span>
+            Editar Perfil
+          </button>
+          <button mat-stroked-button (click)="onChangePassword()">
+            <span class="material-icons">lock</span>
+            Cambiar Contraseña
+          </button>
+        </div>
+      </mat-card>
+
+    } @else {
+      <div class="no-user">
+        <span class="material-icons">person_off</span>
+        <p>No se encontró información del usuario.</p>
+      </div>
+    }
+  </div>
+</div>

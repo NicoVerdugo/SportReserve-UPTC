@@ -1,1 +1,49 @@
-<p>notifications-list works!</p>
+<div class="notifications-page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <mat-icon>notifications</mat-icon>
+        Notificaciones
+      </h1>
+      @if (unreadCount() > 0) {
+        <span class="unread-badge">{{ unreadCount() }} sin leer</span>
+      }
+    </div>
+
+    @if (unreadCount() > 0) {
+      <button mat-stroked-button (click)="onMarkAllRead()">
+        <mat-icon>done_all</mat-icon>
+        Marcar todas como leídas
+      </button>
+    }
+  </div>
+
+  <mat-card class="notifications-card">
+    @if (loading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Cargando notificaciones...</p>
+      </div>
+    } @else if (notifications().length === 0) {
+      <div class="empty-state">
+        <mat-icon>notifications_none</mat-icon>
+        <h3>Sin notificaciones</h3>
+        <p>No tienes notificaciones por el momento.</p>
+      </div>
+    } @else {
+      @for (group of groupedNotifications(); track group.date) {
+        <div class="date-group">
+          <div class="date-label">{{ group.date }}</div>
+          @for (notification of group.items; track notification._id) {
+            <app-notification-item
+              [notification]="notification"
+              (markRead)="onMarkRead($event)">
+            </app-notification-item>
+          }
+        </div>
+      }
+    }
+  </mat-card>
+
+</div>

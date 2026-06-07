@@ -1,1 +1,65 @@
-<p>reports-dashboard works!</p>
+<div class="reports-page">
+
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>assessment</mat-icon>
+      Reportes y Estadísticas
+    </h1>
+    <p class="page-subtitle">Visualiza el rendimiento y métricas del sistema</p>
+  </div>
+
+  <!-- Report type cards -->
+  <div class="report-cards">
+    @for (card of reportCards; track card.type) {
+      <mat-card class="report-card report-card--{{ card.color }}" (click)="navigateTo(card.type)">
+        <div class="card-icon">
+          <mat-icon>{{ card.icon }}</mat-icon>
+        </div>
+        <div class="card-body">
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.description }}</p>
+        </div>
+        <mat-icon class="card-arrow">arrow_forward</mat-icon>
+      </mat-card>
+    }
+  </div>
+
+  <!-- Summary charts -->
+  <div class="charts-section">
+    <h2 class="section-title">Resumen del mes actual</h2>
+
+    @if (loading()) {
+      <div class="loading-state">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Cargando datos...</p>
+      </div>
+    } @else {
+      <div class="charts-grid">
+        <mat-card class="chart-card">
+          <app-report-chart
+            [data]="revenueData()"
+            type="bar"
+            title="Ingresos por Mes (COP)" />
+        </mat-card>
+
+        <mat-card class="chart-card">
+          <app-report-chart
+            [data]="occupancyData()"
+            type="pie"
+            title="Ocupación por Cancha (%)" />
+        </mat-card>
+      </div>
+    }
+  </div>
+
+  <!-- Quick actions -->
+  <div class="actions-section">
+    @for (card of reportCards; track card.type) {
+      <button mat-stroked-button color="primary" (click)="navigateTo(card.type)">
+        <mat-icon>{{ card.icon }}</mat-icon>
+        Ver reporte de {{ card.title | lowercase }}
+      </button>
+    }
+  </div>
+
+</div>

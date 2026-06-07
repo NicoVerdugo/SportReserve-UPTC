@@ -1,1 +1,26 @@
-<p>payment-success works!</p>
+<div class="success-page">
+  <mat-card class="success-card">
+    <div class="success-icon-wrapper">
+      <div class="success-circle">
+        <mat-icon>check</mat-icon>
+      </div>
+    </div>
+
+    <h1 class="success-title">¡Pago exitoso!</h1>
+    <p class="success-subtitle">Tu reserva ha sido confirmada correctamente.</p>
+
+    @if (confirmationNumber()) {
+      <div class="confirmation-box">
+        <span class="confirmation-label">Número de confirmación</span>
+        <span class="confirmation-number">{{ confirmationNumber() }}</span>
+      </div>
+    }
+
+    <div class="success-actions">
+      <button mat-raised-button color="primary" (click)="onViewReservations()">
+        <mat-icon>event</mat-icon>
+        Ver mis reservas
+      </button>
+    </div>
+  </mat-card>
+</div>

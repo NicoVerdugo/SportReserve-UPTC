@@ -1,0 +1,24 @@
+.profile-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.half-field {
+  flex: 1;
+  width: 100%;
+}
+
+.full-field {
+  width: 100%;
+  display: block;
+}

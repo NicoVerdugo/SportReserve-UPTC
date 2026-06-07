@@ -1,14 +1,3 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { ReportsRoutingModule } from './reports-routing-module';
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    ReportsRoutingModule
-  ]
-})
-export class ReportsModule { }
+// Standalone/signals architecture — lazy loading is handled via ReportsRoutingModule routes.
+// This file is kept for compatibility; no NgModule is needed.
+export const ReportsModule = [];

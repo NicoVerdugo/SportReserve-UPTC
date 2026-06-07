@@ -1,1 +1,46 @@
-<p>report-chart works!</p>
+<div class="report-chart">
+  @if (title()) {
+    <h3 class="chart-title">{{ title() }}</h3>
+  }
+
+  @if (data().length === 0) {
+    <div class="chart-empty">Sin datos disponibles</div>
+  } @else if (type() === 'bar') {
+    <div class="bar-chart">
+      @for (point of data(); track point.label) {
+        <div class="bar-column">
+          <span class="bar-value">{{ formatValue(point.value) }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.height.%]="barHeightPercent(point.value)"></div>
+          </div>
+          <span class="bar-label">{{ point.label }}</span>
+        </div>
+      }
+    </div>
+  } @else if (type() === 'pie') {
+    <div class="pie-chart-wrapper">
+      <div class="pie-chart">
+        <svg viewBox="0 0 36 36" class="pie-svg">
+          @for (seg of pieSegments(); track seg.label) {
+            <circle
+              class="pie-segment"
+              cx="18" cy="18" r="15.9"
+              [style.stroke]="seg.color"
+              [style.stroke-dasharray]="seg.pct + ' ' + (100 - seg.pct)"
+              [style.stroke-dashoffset]="-(seg.offset)">
+            </circle>
+          }
+        </svg>
+      </div>
+      <div class="pie-legend">
+        @for (seg of pieSegments(); track seg.label) {
+          <div class="legend-item">
+            <span class="legend-dot" [style.background]="seg.color"></span>
+            <span class="legend-label">{{ seg.label }}</span>
+            <span class="legend-value">{{ seg.pct | number:'1.0-1' }}%</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

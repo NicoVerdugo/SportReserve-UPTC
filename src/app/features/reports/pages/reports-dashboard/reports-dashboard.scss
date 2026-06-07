@@ -1,0 +1,80 @@
+.reports-page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .page-header {
+    margin-bottom: 32px;
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: var(--sr-primary);
+
+      mat-icon { font-size: 32px; width: 32px; height: 32px; }
+    }
+
+    .page-subtitle { color: #666; margin: 0; }
+  }
+
+  .report-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+
+    .report-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 24px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border-left: 4px solid transparent;
+
+      &:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+
+      &--green { border-left-color: #43a047; .card-icon { background: rgba(67,160,71,.1); color: #43a047; } }
+      &--blue  { border-left-color: #1976d2; .card-icon { background: rgba(25,118,210,.1); color: #1976d2; } }
+      &--orange{ border-left-color: #f57c00; .card-icon { background: rgba(245,124,0,.1); color: #f57c00; } }
+
+      .card-icon {
+        width: 52px; height: 52px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        mat-icon { font-size: 28px; width: 28px; height: 28px; }
+      }
+
+      .card-body { flex: 1;
+        h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+        p  { margin: 0; font-size: 13px; color: #666; }
+      }
+
+      .card-arrow { color: #999; }
+    }
+  }
+
+  .charts-section {
+    .section-title { font-size: 20px; font-weight: 600; margin: 0 0 20px; }
+
+    .loading-state {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 48px; gap: 16px; color: #666;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 24px;
+
+      .chart-card { padding: 0; overflow: hidden; }
+    }
+  }
+
+  .actions-section {
+    display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px;
+  }
+}

@@ -1,14 +1,3 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { NotificationsRoutingModule } from './notifications-routing-module';
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    NotificationsRoutingModule
-  ]
-})
-export class NotificationsModule { }
+// Standalone/signals architecture — lazy loading is handled via NotificationsRoutingModule routes.
+// This file is kept for compatibility; no NgModule is needed.
+export const NotificationsModule = [];

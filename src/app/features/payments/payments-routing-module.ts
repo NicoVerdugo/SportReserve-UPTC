@@ -1,10 +1,14 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class PaymentsRoutingModule { }
+export const PaymentsRoutingModule: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./pages/payment-history/payment-history').then(m => m.PaymentHistory),
+  },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./pages/payment-page/payment-page').then(m => m.PaymentPage),
+  },
+];

@@ -1,1 +1,24 @@
-<p>notification-item works!</p>
+<div class="notification-item" [class.unread]="!isRead()" (click)="onMarkRead()">
+  <div class="notification-icon-wrapper" [style.background]="iconColor() + '1a'">
+    <mat-icon [style.color]="iconColor()">{{ icon() }}</mat-icon>
+  </div>
+
+  <div class="notification-body">
+    <div class="notification-header">
+      <span class="notification-title">{{ notification().title }}</span>
+      @if (!isRead()) {
+        <span class="unread-dot"></span>
+      }
+    </div>
+    <p class="notification-message">{{ notification().message }}</p>
+    <span class="notification-time">{{ timeAgo() }}</span>
+  </div>
+
+  @if (!isRead()) {
+    <button mat-icon-button class="mark-read-btn"
+      (click)="$event.stopPropagation(); onMarkRead()"
+      title="Marcar como leída">
+      <mat-icon>done</mat-icon>
+    </button>
+  }
+</div>

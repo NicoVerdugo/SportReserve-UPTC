@@ -1,1 +1,51 @@
-<p>report-detail works!</p>
+<div class="report-detail-page">
+
+  <div class="page-header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-text">
+      <h1>
+        <mat-icon>{{ meta().icon }}</mat-icon>
+        {{ meta().title }}
+      </h1>
+    </div>
+  </div>
+
+  <app-report-filter (filterChange)="onFilterChange($event)" />
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Generando reporte...</p>
+    </div>
+  } @else {
+    <div class="report-content">
+
+      <mat-card class="chart-card">
+        <app-report-chart
+          [data]="chartData()"
+          [type]="meta().chartType"
+          [title]="meta().title" />
+      </mat-card>
+
+      @if (tableRows().length) {
+        <mat-card class="summary-card">
+          <h2 class="summary-title">Resumen</h2>
+          <table class="summary-table">
+            <tbody>
+              @for (row of tableRows(); track row.label) {
+                <tr>
+                  <td class="row-label">{{ row.label }}</td>
+                  <td class="row-value">{{ row.value }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </mat-card>
+      }
+
+    </div>
+  }
+
+</div>

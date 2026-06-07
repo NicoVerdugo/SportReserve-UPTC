@@ -1,14 +1,3 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { PaymentsRoutingModule } from './payments-routing-module';
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    PaymentsRoutingModule
-  ]
-})
-export class PaymentsModule { }
+// Standalone/signals architecture — lazy loading is handled via PaymentsRoutingModule routes.
+// This file is kept for compatibility; no NgModule is needed.
+export const PaymentsModule = [];

@@ -1,0 +1,106 @@
+.card-form {
+  border-radius: 12px !important;
+  margin-bottom: 16px;
+}
+
+.form-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 20px;
+
+  mat-icon { color: #1976d2; }
+}
+
+.card-preview {
+  margin-bottom: 24px;
+}
+
+.card-visual {
+  background: linear-gradient(135deg, #1565c0, #0288d1);
+  border-radius: 16px;
+  padding: 24px;
+  color: #fff;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.4);
+}
+
+.card-chip {
+  width: 40px;
+  height: 30px;
+  background: linear-gradient(135deg, #ffd740, #ffab00);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.card-number-display {
+  font-size: 1.2rem;
+  letter-spacing: 3px;
+  font-family: monospace;
+  margin-bottom: 16px;
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.card-field-label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 2px;
+  letter-spacing: 0.1em;
+}
+
+.card-holder, .card-expiry {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.full-field  { width: 100%; }
+.half-field  { flex: 1; }
+
+.security-badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.security-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #2e7d32;
+  font-weight: 600;
+  background: #e8f5e9;
+  padding: 4px 10px;
+  border-radius: 12px;
+
+  mat-icon { font-size: 14px !important; width: 14px !important; height: 14px !important; }
+}
