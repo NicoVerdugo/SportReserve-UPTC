@@ -1,1 +1,16 @@
-<p>field-filter works!</p>
+<form [formGroup]="form" class="filter-bar">
+  <mat-form-field appearance="outline" class="filter-bar__search">
+    <mat-label>Buscar canchas...</mat-label>
+    <input matInput formControlName="search" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-bar__sport">
+    <mat-label>Deporte</mat-label>
+    <mat-select formControlName="sportType">
+      @for (sport of sportTypes; track sport.value) {
+        <mat-option [value]="sport.value">{{ sport.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</form>

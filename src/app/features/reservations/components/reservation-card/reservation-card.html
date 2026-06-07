@@ -1,1 +1,33 @@
-<p>reservation-card works!</p>
+<mat-card class="reservation-card">
+  <mat-card-content>
+    <div class="card-body">
+      <div class="card-icon">
+        <mat-icon>event</mat-icon>
+      </div>
+
+      <div class="card-info">
+        <p class="card-field">{{ fieldName }}</p>
+        <p class="card-datetime">
+          <mat-icon>calendar_today</mat-icon>
+          {{ reservation().date | date:'dd/MM/yyyy':'UTC' }}
+          &nbsp;·&nbsp;
+          <mat-icon>schedule</mat-icon>
+          {{ reservation().startTime }} – {{ reservation().endTime }}
+        </p>
+      </div>
+
+      <div class="card-right">
+        <span class="status-badge status-badge--{{ reservation().status }}">
+          {{ getStatusLabel(reservation().status) }}
+        </span>
+        <span class="card-price">{{ reservation().totalPrice | formatCurrency }}</span>
+      </div>
+
+      @if (canCancel) {
+        <button mat-icon-button color="warn" matTooltip="Cancelar reserva" (click)="onCancel()">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

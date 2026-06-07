@@ -1,1 +1,131 @@
-<p>field-detail works!</p>
+<div class="page-container">
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (field()) {
+    @let f = field()!;
+
+    <!-- Back button -->
+    <button mat-button class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Canchas
+    </button>
+
+    <!-- Hero image gallery -->
+    <div class="gallery">
+      <div class="gallery__hero">
+        @if (f.images.length) {
+          <img [src]="f.images[0]" [alt]="f.name" />
+        } @else {
+          <div class="gallery__placeholder">
+            <mat-icon>sports_soccer</mat-icon>
+          </div>
+        }
+      </div>
+      @if (f.images.length > 1) {
+        <div class="gallery__thumbs">
+          @for (img of f.images.slice(1); track img) {
+            <img [src]="img" [alt]="f.name" class="gallery__thumb" />
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Field info -->
+    <div class="detail-layout">
+      <div class="detail-main">
+        <div class="field-header">
+          <div class="field-header__title-row">
+            <h1>{{ f.name }}</h1>
+            <span class="sport-badge sport-badge--{{ f.sportType }}">{{ sportLabel }}</span>
+            <span class="status-badge status-badge--{{ f.status }}">
+              {{ f.status === 'active' ? 'Activa' : f.status === 'inactive' ? 'Inactiva' : 'Mantenimiento' }}
+            </span>
+          </div>
+
+          <div class="field-header__location">
+            <mat-icon>place</mat-icon>
+            <span>{{ f.location }}</span>
+          </div>
+        </div>
+
+        @if (f.description) {
+          <p class="field-description">{{ f.description }}</p>
+        }
+
+        <div class="info-cards">
+          <div class="info-card">
+            <mat-icon>people</mat-icon>
+            <div>
+              <span class="info-card__value">{{ f.capacity }}</span>
+              <span class="info-card__label">Capacidad (personas)</span>
+            </div>
+          </div>
+          <div class="info-card">
+            <mat-icon>payments</mat-icon>
+            <div>
+              <span class="info-card__value">{{ f.pricePerHour | formatCurrency }}</span>
+              <span class="info-card__label">Por hora</span>
+            </div>
+          </div>
+        </div>
+
+        @if (isAdmin()) {
+          <div class="admin-actions">
+            <button mat-stroked-button color="accent" (click)="editField()">
+              <mat-icon>edit</mat-icon>Editar
+            </button>
+            <button mat-stroked-button color="warn" (click)="deleteField()">
+              <mat-icon>delete</mat-icon>Eliminar
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Availability panel -->
+      <div class="availability-panel" data-cy="availability-panel">
+        <h2>Disponibilidad</h2>
+
+        <mat-form-field appearance="outline" class="date-picker">
+          <mat-label>Selecciona una fecha</mat-label>
+          <input matInput [matDatepicker]="picker" [min]="minDate"
+                 data-cy="date-picker-input"
+                 [ngModel]="selectedDate()"
+                 (ngModelChange)="loadAvailability($event)" />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        @if (loadingSlots()) {
+          <div class="slots-loading"><mat-spinner diameter="32"></mat-spinner></div>
+        } @else if (selectedDate()) {
+          @if (availableSlots().length) {
+            <div class="slots-grid">
+              @for (slot of availableSlots(); track slot.startTime) {
+                <button mat-stroked-button color="primary" class="slot-btn"
+                        data-cy="slot-btn"
+                        (click)="onReserve(slot)">
+                  {{ slot.startTime }} – {{ slot.endTime }}
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="no-slots">
+              <mat-icon>event_busy</mat-icon>
+              <p>No hay horarios disponibles para este día</p>
+            </div>
+          }
+        } @else {
+          <p class="select-date-hint">Selecciona una fecha para ver los horarios disponibles</p>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <mat-icon>error_outline</mat-icon>
+      <p>No se encontró la cancha</p>
+      <button mat-raised-button color="primary" (click)="goBack()">Volver</button>
+    </div>
+  }
+</div>

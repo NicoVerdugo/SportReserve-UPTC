@@ -1,0 +1,20 @@
+.filter-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+
+  &__search {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  &__sport {
+    width: 220px;
+
+    @media (max-width: 600px) {
+      width: 100%;
+    }
+  }
+}

@@ -1,10 +1,24 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class SportsFieldsRoutingModule { }
+export const SportsFieldsRoutingModule: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./pages/fields-list/fields-list').then(m => m.FieldsList),
+  },
+  {
+    path: 'new',
+    loadComponent: () =>
+      import('./pages/field-form/field-form').then(m => m.FieldForm),
+  },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./pages/field-detail/field-detail').then(m => m.FieldDetail),
+  },
+  {
+    path: ':id/edit',
+    loadComponent: () =>
+      import('./pages/field-form/field-form').then(m => m.FieldForm),
+  },
+];

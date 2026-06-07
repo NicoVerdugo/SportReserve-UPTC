@@ -1,10 +1,19 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class ReservationsRoutingModule { }
+export const ReservationsRoutingModule: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./pages/reservations-list/reservations-list').then(m => m.ReservationsList),
+  },
+  {
+    path: 'new',
+    loadComponent: () =>
+      import('./pages/create-reservation/create-reservation').then(m => m.CreateReservation),
+  },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./pages/reservation-detail/reservation-detail').then(m => m.ReservationDetail),
+  },
+];

@@ -1,1 +1,164 @@
-<p>create-reservation works!</p>
+<div class="page-container">
+  <button mat-button class="back-btn" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Volver a Canchas
+  </button>
+
+  <h1 class="page-title">Nueva Reserva</h1>
+
+  @if (loadingField()) {
+    <div class="loading-state"><mat-spinner diameter="48"></mat-spinner></div>
+  } @else if (field()) {
+    @let f = field()!;
+    <div class="reservation-layout">
+
+      <!-- Left: steps -->
+      <div class="steps-col">
+
+        <!-- Step 1: Field info -->
+        <mat-card class="step-card">
+          <mat-card-header>
+            <div class="step-number">1</div>
+            <mat-card-title>Cancha Seleccionada</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="field-info">
+              <div class="field-info__icon">
+                <mat-icon>sports_soccer</mat-icon>
+              </div>
+              <div>
+                <p class="field-info__name">{{ f.name }}</p>
+                <p class="field-info__location">
+                  <mat-icon>place</mat-icon>{{ f.location }}
+                </p>
+                <p class="field-info__price">{{ f.pricePerHour | formatCurrency }} / hora</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Step 2: Date picker -->
+        <mat-card class="step-card">
+          <mat-card-header>
+            <div class="step-number">2</div>
+            <mat-card-title>Selecciona la Fecha</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Fecha de la reserva</mat-label>
+              <input matInput [matDatepicker]="picker" [min]="minDate"
+                     [ngModel]="selectedDate()"
+                     (ngModelChange)="onDateChange($event)" />
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Step 3: Time slots -->
+        <mat-card class="step-card">
+          <mat-card-header>
+            <div class="step-number">3</div>
+            <mat-card-title>Selecciona el Horario</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (!selectedDate()) {
+              <p class="hint-text">Primero selecciona una fecha</p>
+            } @else if (loadingSlots()) {
+              <div class="slots-loading"><mat-spinner diameter="32"></mat-spinner></div>
+            } @else if (availableSlots().length === 0) {
+              <div class="no-slots">
+                <mat-icon>event_busy</mat-icon>
+                <p>No hay horarios disponibles para este día</p>
+              </div>
+            } @else {
+              <div class="slots-grid">
+                @for (slot of availableSlots(); track slot.startTime) {
+                  <button
+                    mat-stroked-button
+                    class="slot-chip"
+                    data-cy="slot-chip"
+                    [class.slot-chip--selected]="isSlotSelected(slot)"
+                    (click)="selectSlot(slot)">
+                    {{ slot.startTime }} – {{ slot.endTime }}
+                  </button>
+                }
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Step 4: Notes -->
+        <mat-card class="step-card">
+          <mat-card-header>
+            <div class="step-number">4</div>
+            <mat-card-title>Notas (opcional)</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form [formGroup]="form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Notas o comentarios</mat-label>
+                <textarea matInput formControlName="notes" rows="3"
+                          placeholder="Ej: Necesito chalecos, somos 10 personas..."></textarea>
+              </mat-form-field>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Right: summary -->
+      <div class="summary-col">
+        <mat-card class="summary-card">
+          <mat-card-header>
+            <mat-card-title>Resumen de Reserva</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="summary-rows">
+              <div class="summary-row">
+                <span class="summary-label">Cancha</span>
+                <span class="summary-value">{{ f.name }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Fecha</span>
+                <span class="summary-value">
+                  {{ selectedDate() ? (selectedDate()! | date:'dd/MM/yyyy') : '—' }}
+                </span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Horario</span>
+                <span class="summary-value">
+                  {{ selectedSlot() ? (selectedSlot()!.startTime + ' – ' + selectedSlot()!.endTime) : '—' }}
+                </span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Duración</span>
+                <span class="summary-value">{{ totalHours() }} hora(s)</span>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row summary-row--total">
+                <span class="summary-label">Total</span>
+                <span class="summary-value summary-value--price">{{ totalPrice() | formatCurrency }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" class="confirm-btn"
+                    data-cy="confirm-btn"
+                    [disabled]="!selectedDate() || !selectedSlot() || submitting()"
+                    (click)="onSubmit()">
+              @if (submitting()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <ng-container>
+                  <mat-icon>check_circle</mat-icon>
+                  Confirmar Reserva
+                </ng-container>
+              }
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+    </div>
+  }
+</div>

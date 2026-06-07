@@ -1,1 +1,22 @@
-<p>field-gallery works!</p>
+<div class="gallery">
+  @if (activeImage) {
+    <div class="gallery__hero">
+      <img [src]="activeImage" alt="Imagen de cancha" />
+    </div>
+  } @else {
+    <div class="gallery__placeholder">
+      <mat-icon>sports_soccer</mat-icon>
+    </div>
+  }
+
+  @if (images().length > 1) {
+    <div class="gallery__thumbs">
+      @for (img of images(); track img; let i = $index) {
+        <img [src]="img" alt="Miniatura"
+             class="gallery__thumb"
+             [class.gallery__thumb--active]="activeIndex() === i"
+             (click)="selectImage(i)" />
+      }
+    </div>
+  }
+</div>

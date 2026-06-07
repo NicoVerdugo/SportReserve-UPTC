@@ -1,1 +1,58 @@
-<p>field-card works!</p>
+<mat-card class="field-card" data-cy="field-card" (click)="onCardClick()">
+  <div class="field-card__image">
+    @if (firstImage) {
+      <img [src]="firstImage" [alt]="field().name" />
+    } @else {
+      <div class="field-card__image-placeholder">
+        <mat-icon>{{ getSportIcon(field().sportType) }}</mat-icon>
+      </div>
+    }
+    <span class="sport-badge sport-badge--{{ field().sportType }}">
+      {{ getSportLabel(field().sportType) }}
+    </span>
+    <span class="status-badge status-badge--{{ field().status }}">
+      {{ getStatusLabel(field().status) }}
+    </span>
+  </div>
+
+  <mat-card-content class="field-card__body">
+    <h3 class="field-card__name">{{ field().name }}</h3>
+
+    <div class="field-card__location">
+      <mat-icon>place</mat-icon>
+      <span>{{ field().location }}</span>
+    </div>
+
+    <div class="field-card__meta">
+      <div class="meta-item">
+        <mat-icon>people</mat-icon>
+        <span>{{ field().capacity }} personas</span>
+      </div>
+      <div class="meta-item">
+        <mat-icon>payments</mat-icon>
+        <span>{{ field().pricePerHour | formatCurrency }}/h</span>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions class="field-card__actions">
+    <button mat-stroked-button color="primary" data-cy="view-details-btn" (click)="onCardClick(); $event.stopPropagation()">
+      Ver Detalles
+    </button>
+    @if (field().status === 'active') {
+      <button mat-raised-button color="primary" data-cy="reserve-btn" (click)="onReserve($event)">
+        Reservar
+      </button>
+    }
+    @if (showActions()) {
+      <div class="admin-actions">
+        <button mat-icon-button color="accent" matTooltip="Editar" (click)="onEdit($event)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="onDelete($event)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
+  </mat-card-actions>
+</mat-card>

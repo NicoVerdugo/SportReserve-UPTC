@@ -1,1 +1,131 @@
-<p>reservations-list works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>{{ isAdmin() ? 'Todas las Reservas' : 'Mis Reservas' }}</h1>
+      <p>{{ isAdmin() ? 'Gestión de reservas del sistema' : 'Historial y próximas reservas' }}</p>
+    </div>
+    <button mat-raised-button color="primary" data-cy="new-reservation-btn" (click)="navigateToNew()">
+      <mat-icon>add</mat-icon>
+      Nueva Reserva
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state"><mat-spinner diameter="48"></mat-spinner></div>
+  } @else {
+    <mat-tab-group animationDuration="200ms" class="tabs">
+
+      <!-- Próximas -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">upcoming</mat-icon>
+          Próximas ({{ upcoming.length }})
+        </ng-template>
+        <div class="tab-content">
+          @if (upcoming.length) {
+            <ng-container *ngTemplateOutlet="reservationsTable; context: { $implicit: upcoming }"></ng-container>
+          } @else {
+            <ng-container *ngTemplateOutlet="emptyState; context: { msg: 'No tienes reservas próximas' }"></ng-container>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Historial -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">history</mat-icon>
+          Historial ({{ history.length }})
+        </ng-template>
+        <div class="tab-content">
+          @if (history.length) {
+            <ng-container *ngTemplateOutlet="reservationsTable; context: { $implicit: history }"></ng-container>
+          } @else {
+            <ng-container *ngTemplateOutlet="emptyState; context: { msg: 'No hay reservas completadas' }"></ng-container>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Canceladas -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">cancel</mat-icon>
+          Canceladas ({{ cancelled.length }})
+        </ng-template>
+        <div class="tab-content">
+          @if (cancelled.length) {
+            <ng-container *ngTemplateOutlet="reservationsTable; context: { $implicit: cancelled }"></ng-container>
+          } @else {
+            <ng-container *ngTemplateOutlet="emptyState; context: { msg: 'No hay reservas canceladas' }"></ng-container>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>
+
+<!-- Table template -->
+<ng-template #reservationsTable let-rows>
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="rows" class="reservations-table">
+
+      @if (isAdmin()) {
+        <ng-container matColumnDef="user">
+          <th mat-header-cell *matHeaderCellDef>Usuario</th>
+          <td mat-cell *matCellDef="let r">{{ getUserName(r.userId) }}</td>
+        </ng-container>
+      }
+
+      <ng-container matColumnDef="field">
+        <th mat-header-cell *matHeaderCellDef>Cancha</th>
+        <td mat-cell *matCellDef="let r">{{ getFieldName(r.fieldId) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let r">{{ r.date | date:'dd/MM/yyyy':'UTC' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef>Hora</th>
+        <td mat-cell *matCellDef="let r">{{ r.startTime }} – {{ r.endTime }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let r">
+          <span class="status-badge status-badge--{{ r.status }}">{{ getStatusLabel(r.status) }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>Precio</th>
+        <td mat-cell *matCellDef="let r">{{ r.totalPrice | currency:'COP':'symbol':'1.0-0' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let r">
+          <button mat-icon-button matTooltip="Ver detalle" data-cy="view-btn" (click)="onView(r._id); $event.stopPropagation()">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          @if (canCancel(r)) {
+            <button mat-icon-button color="warn" matTooltip="Cancelar" data-cy="cancel-btn" (click)="onCancel(r); $event.stopPropagation()">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" (click)="onView(row._id)"></tr>
+    </table>
+  </div>
+</ng-template>
+
+<!-- Empty state template -->
+<ng-template #emptyState let-msg="msg">
+  <div class="empty-state">
+    <mat-icon>event_busy</mat-icon>
+    <p>{{ msg }}</p>
+  </div>
+</ng-template>

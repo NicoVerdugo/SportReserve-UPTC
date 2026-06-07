@@ -1,1 +1,123 @@
-<p>reservation-detail works!</p>
+<div class="page-container">
+  <button mat-button class="back-btn" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Volver a Reservas
+  </button>
+
+  @if (loading()) {
+    <div class="loading-state"><mat-spinner diameter="48"></mat-spinner></div>
+  } @else if (reservation()) {
+    @let r = reservation()!;
+
+    <div class="detail-layout">
+
+      <!-- Main info card -->
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <div mat-card-avatar class="card-avatar">
+            <mat-icon>event</mat-icon>
+          </div>
+          <mat-card-title>Detalle de Reserva</mat-card-title>
+          <mat-card-subtitle>ID: {{ r._id }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-item__label">Cancha</span>
+              <span class="info-item__value">{{ fieldName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-item__label">Fecha</span>
+              <span class="info-item__value">{{ r.date | date:'EEEE, dd MMMM yyyy':'UTC':'es' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-item__label">Horario</span>
+              <span class="info-item__value">{{ r.startTime }} – {{ r.endTime }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-item__label">Duración</span>
+              <span class="info-item__value">{{ r.totalHours }} hora(s)</span>
+            </div>
+            <div class="info-item">
+              <span class="info-item__label">Estado</span>
+              <span class="status-badge status-badge--{{ r.status }}">
+                {{ getStatusLabel(r.status) }}
+              </span>
+            </div>
+            @if (isAdmin) {
+              <div class="info-item">
+                <span class="info-item__label">Usuario</span>
+                <span class="info-item__value">{{ userName }}</span>
+              </div>
+            }
+            @if (r.notes) {
+              <div class="info-item info-item--full">
+                <span class="info-item__label">Notas</span>
+                <span class="info-item__value">{{ r.notes }}</span>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Payment info card -->
+      <mat-card class="payment-card">
+        <mat-card-header>
+          <div mat-card-avatar class="card-avatar card-avatar--green">
+            <mat-icon>payments</mat-icon>
+          </div>
+          <mat-card-title>Información de Pago</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="payment-rows">
+            <div class="payment-row">
+              <span>Precio por hora</span>
+              <span>{{ (r.totalPrice / r.totalHours) | formatCurrency }}</span>
+            </div>
+            <div class="payment-row">
+              <span>Horas reservadas</span>
+              <span>× {{ r.totalHours }}</span>
+            </div>
+            <div class="payment-divider"></div>
+            <div class="payment-row payment-row--total">
+              <span>Total</span>
+              <span class="payment-total">{{ r.totalPrice | formatCurrency }}</span>
+            </div>
+            @if (r.paymentId) {
+              <div class="payment-row">
+                <span>ID de pago</span>
+                <span class="payment-id">{{ r.paymentId }}</span>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          @if (canCancel) {
+            <button mat-stroked-button color="warn" [disabled]="acting()" (click)="onCancel()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar Reserva
+            </button>
+          }
+          @if (canComplete) {
+            <button mat-raised-button color="primary" [disabled]="acting()" (click)="onComplete()">
+              <mat-icon>check_circle</mat-icon>
+              Marcar Completada
+            </button>
+          }
+          @if (acting()) {
+            <mat-spinner diameter="28"></mat-spinner>
+          }
+        </mat-card-actions>
+      </mat-card>
+
+    </div>
+  } @else {
+    <div class="empty-state">
+      <mat-icon>error_outline</mat-icon>
+      <p>No se encontró la reserva</p>
+      <button mat-raised-button color="primary" (click)="goBack()">Volver</button>
+    </div>
+  }
+</div>

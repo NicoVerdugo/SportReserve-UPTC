@@ -1,1 +1,152 @@
-<p>field-form works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1>{{ isEditMode() ? 'Editar Cancha' : 'Nueva Cancha' }}</h1>
+    <p>{{ isEditMode() ? 'Modifica los datos de la cancha' : 'Completa el formulario para crear una nueva cancha' }}</p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state"><mat-spinner diameter="48"></mat-spinner></div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="field-form">
+
+      <!-- Basic info -->
+      <div class="form-section">
+        <h2 class="section-title">Información Básica</h2>
+
+        <!-- Image upload -->
+        <div class="image-upload-section">
+          @if (imagePreview()) {
+            <div class="image-preview">
+              <img [src]="imagePreview()" alt="Preview de cancha" />
+              <button type="button" class="remove-image-btn" (click)="removeImage()" matTooltip="Eliminar imagen">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          } @else {
+            <label class="image-upload-box">
+              <mat-icon>image</mat-icon>
+              <p>Clic para cargar imagen</p>
+              <small>Máx. 5MB (PNG, JPG, WEBP)</small>
+              <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
+            </label>
+          }
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field form-field--wide">
+            <mat-label>Nombre de la cancha</mat-label>
+            <input matInput formControlName="name" />
+            @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
+              <mat-error>El nombre es obligatorio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Tipo de deporte</mat-label>
+            <mat-select formControlName="sportType">
+              @for (st of sportTypes; track st.value) {
+                <mat-option [value]="st.value">{{ st.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="status">
+              @for (s of statusOptions; track s.value) {
+                <mat-option [value]="s.value">{{ s.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="form-field form-field--full">
+          <mat-label>Ubicación</mat-label>
+          <input matInput formControlName="location" />
+          @if (form.get('location')?.hasError('required') && form.get('location')?.touched) {
+            <mat-error>La ubicación es obligatoria</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field form-field--full">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+
+      <!-- Capacity & price -->
+      <div class="form-section">
+        <h2 class="section-title">Capacidad y Precio</h2>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Capacidad (personas)</mat-label>
+            <input matInput type="number" formControlName="capacity" min="1" />
+            @if (form.get('capacity')?.hasError('min') && form.get('capacity')?.touched) {
+              <mat-error>Mínimo 1 persona</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Precio por hora (COP)</mat-label>
+            <input matInput type="number" formControlName="pricePerHour" min="0" />
+            @if (form.get('pricePerHour')?.hasError('min') && form.get('pricePerHour')?.touched) {
+              <mat-error>El precio no puede ser negativo</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Schedule -->
+      <div class="form-section">
+        <div class="section-header">
+          <h2 class="section-title">Horarios</h2>
+          <button type="button" mat-stroked-button color="primary" (click)="addScheduleRow()">
+            <mat-icon>add</mat-icon> Agregar día
+          </button>
+        </div>
+
+        <div formArrayName="schedule" class="schedule-list">
+          @for (row of schedule.controls; track $index) {
+            <div [formGroupName]="$index" class="schedule-row">
+              <mat-form-field appearance="outline" class="schedule-field schedule-field--day">
+                <mat-label>Día</mat-label>
+                <mat-select formControlName="dayOfWeek">
+                  @for (name of dayNames; track $index) {
+                    <mat-option [value]="$index">{{ name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="schedule-field">
+                <mat-label>Apertura</mat-label>
+                <input matInput type="time" formControlName="openTime" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="schedule-field">
+                <mat-label>Cierre</mat-label>
+                <input matInput type="time" formControlName="closeTime" />
+              </mat-form-field>
+
+              <button type="button" mat-icon-button color="warn"
+                      (click)="removeScheduleRow($index)" matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+          @if (schedule.length === 0) {
+            <p class="no-schedule">No hay horarios configurados. Agrega al menos uno.</p>
+          }
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" mat-stroked-button (click)="cancel()">Cancelar</button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="submitting()">
+          @if (submitting()) { <mat-spinner diameter="20"></mat-spinner> }
+          @else { {{ isEditMode() ? 'Guardar Cambios' : 'Crear Cancha' }} }
+        </button>
+      </div>
+    </form>
+  }
+</div>

@@ -1,1 +1,24 @@
-<p>availability-calendar works!</p>
+<div class="calendar-wrapper">
+  <mat-form-field appearance="outline" class="date-field">
+    <mat-label>Selecciona una fecha</mat-label>
+    <input matInput [matDatepicker]="picker" [min]="minDate"
+           [ngModel]="selectedDate()"
+           (ngModelChange)="onDateChange($event)" />
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  @if (loading()) {
+    <div class="loading"><mat-icon class="spin">autorenew</mat-icon> Cargando horarios...</div>
+  } @else if (selectedDate() && availableSlots.length === 0) {
+    <p class="no-slots">No hay horarios disponibles para este día</p>
+  } @else if (availableSlots.length) {
+    <div class="slots-grid">
+      @for (slot of availableSlots; track slot.startTime) {
+        <button mat-stroked-button color="primary" class="slot-btn" (click)="onSlotClick(slot)">
+          {{ slot.startTime }} – {{ slot.endTime }}
+        </button>
+      }
+    </div>
+  }
+</div>

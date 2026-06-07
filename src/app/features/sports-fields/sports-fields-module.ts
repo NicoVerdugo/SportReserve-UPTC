@@ -1,14 +1,3 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-import { SportsFieldsRoutingModule } from './sports-fields-routing-module';
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    SportsFieldsRoutingModule
-  ]
-})
-export class SportsFieldsModule { }
+// Standalone/signals architecture — lazy loading is handled via SportsFieldsRoutingModule routes.
+// This file is kept for compatibility; no NgModule is needed.
+export const SportsFieldsModule = [];

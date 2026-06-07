@@ -1,1 +1,48 @@
-<p>fields-list works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header__text">
+      <h1>Canchas Deportivas</h1>
+      <p>Encuentra y reserva la cancha perfecta para ti</p>
+    </div>
+    @if (isAdmin()) {
+      <button mat-raised-button color="primary" (click)="navigateToNew()">
+        <mat-icon>add</mat-icon>
+        Nueva Cancha
+      </button>
+    }
+  </div>
+
+  <app-field-filter (filterChange)="onFilter($event)" />
+
+  @if (loading()) {
+    <div class="fields-grid">
+      @for (i of [1,2,3]; track i) {
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line skeleton-line--title"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (fields().length === 0) {
+    <div class="empty-state">
+      <mat-icon>sports_soccer</mat-icon>
+      <h3>No se encontraron canchas</h3>
+      <p>Intenta ajustar los filtros de búsqueda</p>
+    </div>
+  } @else {
+    <div class="fields-grid">
+      @for (field of fields(); track field._id) {
+        <app-field-card
+          [field]="field"
+          [showActions]="isAdmin()"
+          (editField)="onEditField($event)"
+          (deleteField)="onDeleteField($event)"
+        />
+      }
+    </div>
+  }
+</div>
