@@ -1,3 +1,18 @@
+/**
+ * @file users.routes.ts
+ * @module users
+ * @description Definición de rutas REST para la gestión de usuarios en SportReserve-UPTC.
+ * Todas las rutas están protegidas: requieren autenticación JWT y rol ADMIN.
+ *
+ * Rutas disponibles:
+ * - GET    /api/users              → Listar usuarios con paginación y filtros.
+ * - GET    /api/users/:id          → Obtener usuario por ID.
+ * - PUT    /api/users/:id          → Actualizar datos del usuario.
+ * - DELETE /api/users/:id          → Eliminar usuario.
+ * - PATCH  /api/users/:id/status   → Cambiar estado del usuario.
+ * - PATCH  /api/users/:id/role     → Cambiar rol del usuario.
+ */
+
 import { Router } from 'express';
 import * as usersController from './users.controller';
 import { authenticate, authorize } from '../../middleware/auth.middleware';
@@ -6,7 +21,10 @@ import { body, param } from 'express-validator';
 
 const router = Router();
 
-// All routes require authentication and ADMIN role
+/**
+ * Middleware global del módulo: todas las rutas requieren
+ * token JWT válido (`authenticate`) y rol ADMIN (`authorize`).
+ */
 router.use(authenticate, authorize('ADMIN'));
 
 /**
@@ -68,7 +86,7 @@ router.get('/', usersController.getAll);
  */
 router.get(
   '/:id',
-  [param('id').isMongoId().withMessage('Invalid user ID')],
+  [param('id').isMongoId().withMessage('Invalid user ID')], // Valida que el ID sea un MongoId válido
   validateRequest,
   usersController.getById
 );
@@ -95,6 +113,7 @@ router.put(
   '/:id',
   [
     param('id').isMongoId().withMessage('Invalid user ID'),
+    // Campos opcionales: solo se validan si están presentes en el body
     body('firstName').optional().trim().isLength({ min: 2, max: 50 }),
     body('lastName').optional().trim().isLength({ min: 2, max: 50 }),
     body('phone').optional().trim(),
