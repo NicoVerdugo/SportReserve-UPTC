@@ -1,3 +1,19 @@
+/**
+ * @file fields.routes.ts
+ * @module fields
+ * @description Definición de rutas REST para la gestión de canchas deportivas en SportReserve-UPTC.
+ *
+ * Rutas públicas (sin autenticación):
+ * - GET  /api/fields                    → Listar canchas con paginación y filtros.
+ * - GET  /api/fields/:id                → Obtener cancha por ID.
+ * - GET  /api/fields/:id/availability   → Consultar disponibilidad por fecha.
+ *
+ * Rutas protegidas (requieren JWT + rol ADMIN):
+ * - POST   /api/fields       → Crear nueva cancha.
+ * - PUT    /api/fields/:id   → Actualizar cancha existente.
+ * - DELETE /api/fields/:id   → Eliminar cancha.
+ */
+
 import { Router } from 'express';
 import * as fieldsController from './fields.controller';
 import { authenticate, authorize } from '../../middleware/auth.middleware';
@@ -6,6 +22,18 @@ import { body, param, query } from 'express-validator';
 
 const router = Router();
 
+/**
+ * Validadores reutilizables para creación y actualización de canchas.
+ * Se aplican tanto en POST como en PUT para mantener consistencia.
+ *
+ * Valida:
+ * - Campos de texto: nombre, ubicación, descripción.
+ * - Tipo de deporte: enum estricto.
+ * - Imágenes: URLs http/https o base64 data URIs.
+ * - Capacidad y precio: valores numéricos con restricciones mínimas.
+ * - Horario: array de slots con día, apertura y cierre en formato HH:mm.
+ * - Estado: enum opcional.
+ */
 const createFieldValidators = [
   body('name').trim().notEmpty().withMessage('Field name is required').isLength({ max: 100 }),
   body('sportType')
@@ -145,7 +173,7 @@ router.post(
   '/',
   authenticate,
   authorize('ADMIN'),
-  createFieldValidators,
+  createFieldValidators,   // Validadores de creación reutilizables
   validateRequest,
   fieldsController.create
 );
@@ -172,7 +200,7 @@ router.put(
   '/:id',
   authenticate,
   authorize('ADMIN'),
-  [param('id').isMongoId().withMessage('Invalid field ID'), ...createFieldValidators],
+  [param('id').isMongoId().withMessage('Invalid field ID'), ...createFieldValidators], // Reutiliza validadores + valida ID
   validateRequest,
   fieldsController.update
 );

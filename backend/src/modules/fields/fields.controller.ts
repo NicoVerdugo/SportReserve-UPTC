@@ -1,8 +1,36 @@
+/**
+ * @file fields.controller.ts
+ * @module fields
+ * @description Controladores HTTP para la gestión de canchas deportivas en SportReserve-UPTC.
+ * Maneja las solicitudes entrantes, delega la lógica de negocio al servicio
+ * correspondiente y retorna respuestas estandarizadas.
+ *
+ * Acceso:
+ * - Consultas (GET): públicas, no requieren autenticación.
+ * - Mutaciones (POST, PUT, DELETE): requieren autenticación y rol ADMIN.
+ */
+
 import { Request, Response, NextFunction } from 'express';
 import { AuthRequest } from '../../interfaces';
 import * as fieldsService from './fields.service';
 import { successResponse, paginatedResponse } from '../../utils/response.utils';
 
+/**
+ * Obtiene la lista paginada de canchas con filtros opcionales.
+ *
+ * @route   GET /api/fields
+ * @access  Público
+ *
+ * @param {Request} req - Solicitud HTTP. Query params:
+ *   - `page` {number} Número de página (por defecto: 1).
+ *   - `limit` {number} Registros por página (por defecto: 10).
+ *   - `search` {string} Búsqueda por texto en nombre y ubicación.
+ *   - `sportType` {string} Filtro por tipo de deporte.
+ *   - `status` {string} Filtro por estado de la cancha.
+ * @param {Response} res - Respuesta HTTP con lista paginada de canchas.
+ * @param {NextFunction} next - Middleware de manejo de errores.
+ * @returns {Promise<void>}
+ */
 export const getAll = async (
   req: Request,
   res: Response,
@@ -23,6 +51,19 @@ export const getAll = async (
   }
 };
 
+/**
+ * Obtiene una cancha específica por su ID de MongoDB.
+ *
+ * @route   GET /api/fields/:id
+ * @access  Público
+ *
+ * @param {Request} req - Solicitud HTTP. Params: `id` (MongoId).
+ * @param {Response} res - Respuesta HTTP con los datos de la cancha.
+ * @param {NextFunction} next - Middleware de manejo de errores.
+ * @returns {Promise<void>}
+ *
+ * @throws {404} Si la cancha no existe.
+ */
 export const getById = async (
   req: Request,
   res: Response,
@@ -36,6 +77,17 @@ export const getById = async (
   }
 };
 
+/**
+ * Crea una nueva cancha deportiva en el sistema.
+ *
+ * @route   POST /api/fields
+ * @access  Admin
+ *
+ * @param {AuthRequest} req - Solicitud autenticada. Body: {@link CreateFieldDto}.
+ * @param {Response} res - Respuesta HTTP 201 con la cancha creada.
+ * @param {NextFunction} next - Middleware de manejo de errores.
+ * @returns {Promise<void>}
+ */
 export const create = async (
   req: AuthRequest,
   res: Response,
@@ -49,6 +101,19 @@ export const create = async (
   }
 };
 
+/**
+ * Actualiza los datos de una cancha existente.
+ *
+ * @route   PUT /api/fields/:id
+ * @access  Admin
+ *
+ * @param {AuthRequest} req - Solicitud autenticada. Params: `id`. Body: {@link UpdateFieldDto}.
+ * @param {Response} res - Respuesta HTTP con la cancha actualizada.
+ * @param {NextFunction} next - Middleware de manejo de errores.
+ * @returns {Promise<void>}
+ *
+ * @throws {404} Si la cancha no existe.
+ */
 export const update = async (
   req: AuthRequest,
   res: Response,
@@ -62,6 +127,19 @@ export const update = async (
   }
 };
 
+/**
+ * Elimina permanentemente una cancha del sistema.
+ *
+ * @route   DELETE /api/fields/:id
+ * @access  Admin
+ *
+ * @param {AuthRequest} req - Solicitud autenticada. Params: `id` (MongoId).
+ * @param {Response} res - Respuesta HTTP confirmando la eliminación.
+ * @param {NextFunction} next - Middleware de manejo de errores.
+ * @returns {Promise<void>}
+ *
+ * @throws {404} Si la cancha no existe.
+ */
 export const deleteField = async (
   req: AuthRequest,
   res: Response,
@@ -75,6 +153,23 @@ export const deleteField = async (
   }
 };
 
+/**
+ * Obtiene los slots de disponibilidad horaria de una cancha para una fecha específica.
+ *
+ * Verifica el horario configurado para el día de la semana correspondiente
+ * y descuenta los slots ya reservados con estado `pending` o `confirmed`.
+ *
+ * @route   GET /api/fields/:id/availability
+ * @access  Público
+ *
+ * @param {Request} req - Solicitud HTTP. Params: `id`. Query: `date` (YYYY-MM-DD, requerido).
+ * @param {Response} res - Respuesta HTTP con array de {@link TimeSlot}.
+ * @param {NextFunction} next - Middleware de manejo de errores.
+ * @returns {Promise<void>}
+ *
+ * @throws {400} Si el parámetro `date` no se proporciona.
+ * @throws {404} Si la cancha no existe.
+ */
 export const getAvailability = async (
   req: Request,
   res: Response,

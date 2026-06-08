@@ -1,6 +1,24 @@
+/**
+ * @file field.model.ts
+ * @module fields
+ * @description Modelo Mongoose para la entidad Cancha Deportiva (SportField) en SportReserve-UPTC.
+ * Define el esquema principal de canchas y el sub-esquema de horarios por día,
+ * incluyendo validaciones, índices de búsqueda y configuración de timestamps.
+ */
+
 import mongoose, { Schema } from 'mongoose';
 import { ISportField } from '../../interfaces';
 
+/**
+ * Sub-esquema para un slot de horario semanal de una cancha.
+ *
+ * Representa la disponibilidad de la cancha para un día específico de la semana.
+ * No genera `_id` propio ya que es un subdocumento embebido.
+ *
+ * @property {number} dayOfWeek  - Día de la semana (0 = domingo, 6 = sábado).
+ * @property {string} openTime   - Hora de apertura en formato HH:mm (24h).
+ * @property {string} closeTime  - Hora de cierre en formato HH:mm (24h).
+ */
 const scheduleSlotSchema = new Schema(
   {
     dayOfWeek: {
@@ -23,6 +41,27 @@ const scheduleSlotSchema = new Schema(
   { _id: false }
 );
 
+/**
+ * Esquema Mongoose para el modelo Cancha Deportiva.
+ *
+ * Campos principales:
+ * - `name`: Nombre de la cancha (requerido, máx. 100 chars).
+ * - `sportType`: Deporte asociado — `'football'`, `'basketball'`, `'volleyball'`, `'tennis'` o `'multiple'`.
+ * - `location`: Ubicación física de la cancha (requerida, máx. 200 chars).
+ * - `description`: Descripción opcional (máx. 1000 chars).
+ * - `images`: Array de URLs de imágenes (por defecto vacío).
+ * - `capacity`: Capacidad máxima de personas (mínimo 1).
+ * - `pricePerHour`: Precio por hora de uso en pesos (no negativo).
+ * - `schedule`: Array de {@link scheduleSlotSchema} con los horarios por día de la semana.
+ * - `status`: Estado operativo — `'active'`, `'inactive'` o `'maintenance'` (por defecto `'active'`).
+ *
+ * Índices:
+ * - `sportType` y `status`: índices simples para filtrado eficiente.
+ * - `name` + `location`: índice de texto completo para búsqueda con `$text`.
+ *
+ * Opciones:
+ * - `timestamps: true` agrega automáticamente `createdAt` y `updatedAt`.
+ */
 const fieldSchema = new Schema<ISportField>(
   {
     name: {
@@ -82,9 +121,16 @@ const fieldSchema = new Schema<ISportField>(
   }
 );
 
+// Índices para optimizar consultas frecuentes por tipo de deporte y estado
 fieldSchema.index({ sportType: 1 });
 fieldSchema.index({ status: 1 });
+
+// Índice de texto completo para búsqueda por nombre y ubicación con $text
 fieldSchema.index({ name: 'text', location: 'text' });
 
+/**
+ * Modelo Mongoose para la entidad Cancha Deportiva.
+ * Exportado como default para uso en servicios y otras capas de la aplicación.
+ */
 const SportField = mongoose.model<ISportField>('SportField', fieldSchema);
 export default SportField;
