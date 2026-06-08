@@ -1,3 +1,18 @@
+/**
+ * @file payments.routes.ts
+ * @module payments
+ * @description Definición de rutas REST para la gestión de pagos en SportReserve-UPTC.
+ * Todas las rutas requieren autenticación JWT. Las rutas de administración
+ * están protegidas adicionalmente con el rol ADMIN.
+ *
+ * Rutas disponibles:
+ * - POST  /api/payments              → Crear pago para una reserva (USER/ADMIN).
+ * - GET   /api/payments/my           → Listar pagos del usuario autenticado (USER/ADMIN).
+ * - GET   /api/payments              → Listar todos los pagos (solo ADMIN).
+ * - GET   /api/payments/:id          → Obtener pago por ID (USER ve los suyos, ADMIN cualquiera).
+ * - PATCH /api/payments/:id/status   → Actualizar estado del pago (solo ADMIN).
+ */
+
 import { Router } from 'express';
 import * as paymentsController from './payments.controller';
 import { authenticate, authorize } from '../../middleware/auth.middleware';
@@ -6,6 +21,7 @@ import { body, param } from 'express-validator';
 
 const router = Router();
 
+// Todas las rutas del módulo requieren autenticación JWT
 router.use(authenticate);
 
 /**
@@ -60,6 +76,8 @@ router.post(
  *       200:
  *         description: User's payments
  */
+// IMPORTANTE: esta ruta debe definirse antes de /:id para evitar que
+// Express interprete 'my' como un MongoId y falle la validación
 router.get('/my', paymentsController.getMyPayments);
 
 /**
