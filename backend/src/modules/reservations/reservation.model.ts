@@ -1,6 +1,38 @@
+/**
+ * @file reservation.model.ts
+ * @module reservations
+ * @description Modelo Mongoose para la entidad Reserva en SportReserve-UPTC.
+ * Define el esquema de reservas de canchas deportivas, incluyendo referencias
+ * a usuarios, canchas y pagos, con índices optimizados para detección de conflictos.
+ */
+
 import mongoose, { Schema } from 'mongoose';
 import { IReservation } from '../../interfaces';
 
+/**
+ * Esquema Mongoose para el modelo Reserva.
+ *
+ * Campos principales:
+ * - `userId`: Referencia al usuario que realiza la reserva (requerido).
+ * - `fieldId`: Referencia a la cancha deportiva reservada (requerido).
+ * - `date`: Fecha de la reserva (requerida).
+ * - `startTime`: Hora de inicio en formato HH:mm (requerida).
+ * - `endTime`: Hora de fin en formato HH:mm (requerida).
+ * - `totalHours`: Duración total en horas (mínimo 0.5 = 30 minutos).
+ * - `totalPrice`: Precio total calculado (`totalHours * pricePerHour`).
+ * - `status`: Estado de la reserva — `'pending'`, `'confirmed'`, `'cancelled'` o `'completed'`
+ *   (por defecto `'pending'`).
+ * - `paymentId`: Referencia opcional al pago asociado.
+ * - `notes`: Observaciones adicionales opcionales (máx. 500 chars).
+ *
+ * Índices:
+ * - Compuesto `(fieldId, date, startTime, endTime)`: optimiza la detección de conflictos de horario.
+ * - `(userId, status)`: filtra reservas por usuario y estado eficientemente.
+ * - `date`: consultas por fecha.
+ *
+ * Opciones:
+ * - `timestamps: true` agrega automáticamente `createdAt` y `updatedAt`.
+ */
 const reservationSchema = new Schema<IReservation>(
   {
     userId: {
@@ -60,10 +92,16 @@ const reservationSchema = new Schema<IReservation>(
   }
 );
 
-// Compound index for conflict detection
+// Índice compuesto para detección eficiente de conflictos de horario en una misma cancha y fecha
 reservationSchema.index({ fieldId: 1, date: 1, startTime: 1, endTime: 1 });
+// Índice para consultas de reservas por usuario y estado
 reservationSchema.index({ userId: 1, status: 1 });
+// Índice simple para consultas y filtros por fecha
 reservationSchema.index({ date: 1 });
 
+/**
+ * Modelo Mongoose para la entidad Reserva.
+ * Exportado como default para uso en servicios y otras capas de la aplicación.
+ */
 const Reservation = mongoose.model<IReservation>('Reservation', reservationSchema);
 export default Reservation;

@@ -1,3 +1,19 @@
+/**
+ * @file reservations.routes.ts
+ * @module reservations
+ * @description Definición de rutas REST para la gestión de reservas en SportReserve-UPTC.
+ * Todas las rutas requieren autenticación JWT. Las operaciones de confirmación
+ * y cierre están restringidas al rol ADMIN.
+ *
+ * Rutas disponibles:
+ * - POST  /api/reservations              → Crear nueva reserva (USER/ADMIN).
+ * - GET   /api/reservations              → Listar reservas con filtros (USER ve las suyas, ADMIN ve todas).
+ * - GET   /api/reservations/:id          → Obtener reserva por ID (USER ve las suyas, ADMIN cualquiera).
+ * - PATCH /api/reservations/:id/cancel   → Cancelar reserva (USER/ADMIN).
+ * - PATCH /api/reservations/:id/confirm  → Confirmar reserva (solo ADMIN).
+ * - PATCH /api/reservations/:id/complete → Marcar como completada (solo ADMIN).
+ */
+
 import { Router } from 'express';
 import * as reservationsController from './reservations.controller';
 import { authenticate, authorize } from '../../middleware/auth.middleware';
@@ -6,9 +22,18 @@ import { body, param } from 'express-validator';
 
 const router = Router();
 
-// All routes require authentication
+// Todas las rutas del módulo requieren autenticación JWT
 router.use(authenticate);
 
+/**
+ * Validadores reutilizables para la creación de reservas.
+ *
+ * Valida:
+ * - `fieldId`: MongoId válido de la cancha.
+ * - `date`: fecha en formato YYYY-MM-DD.
+ * - `startTime` / `endTime`: hora en formato HH:mm (24h).
+ * - `notes`: observaciones opcionales (máx. 500 chars).
+ */
 const createReservationValidators = [
   body('fieldId').isMongoId().withMessage('Invalid field ID'),
   body('date').isDate().withMessage('Date must be a valid date (YYYY-MM-DD)'),
@@ -163,7 +188,7 @@ router.patch(
  */
 router.patch(
   '/:id/confirm',
-  authorize('ADMIN'),
+  authorize('ADMIN'), // Solo administradores pueden confirmar reservas
   [param('id').isMongoId().withMessage('Invalid reservation ID')],
   validateRequest,
   reservationsController.confirm
@@ -189,7 +214,7 @@ router.patch(
  */
 router.patch(
   '/:id/complete',
-  authorize('ADMIN'),
+  authorize('ADMIN'), // Solo administradores pueden marcar reservas como completadas
   [param('id').isMongoId().withMessage('Invalid reservation ID')],
   validateRequest,
   reservationsController.complete
