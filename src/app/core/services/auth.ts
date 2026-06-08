@@ -1,3 +1,19 @@
+/**
+ * @file auth.ts
+ * @module core/services
+ * @description Servicio principal de autenticación para SportReserve-UPTC.
+ * Gestiona el ciclo de vida de la sesión del usuario: login, registro, logout,
+ * recuperación de contraseña y refresco de token.
+ *
+ * Utiliza Angular Signals para el estado reactivo del usuario autenticado.
+ *
+ * Estado expuesto:
+ * - `currentUser`           → usuario autenticado actual (readonly signal).
+ * - `isAuthenticatedSignal` → booleano reactivo de autenticación.
+ * - `isAdmin`               → computed: true si el usuario tiene rol `ADMIN`.
+ * - `userFullName`          → computed: nombre completo del usuario.
+ */
+
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -28,7 +44,11 @@ export class AuthService {
 
   readonly currentUser = this._currentUser.asReadonly();
   readonly isAuthenticatedSignal = this._isAuthenticated.asReadonly();
+
+  /** `true` si el usuario autenticado tiene rol `ADMIN`. */
   readonly isAdmin = computed(() => this._currentUser()?.role === 'ADMIN');
+
+  /** Nombre completo del usuario autenticado (`firstName lastName`). */
   readonly userFullName = computed(() => {
     const user = this._currentUser();
     return user ? `${user.firstName} ${user.lastName}` : '';
@@ -38,6 +58,10 @@ export class AuthService {
     this.initializeFromStorage();
   }
 
+  /**
+   * Restaura la sesión desde el almacenamiento local al inicializar el servicio.
+   * Si el token existe pero está expirado, limpia la sesión automáticamente.
+   */
   private initializeFromStorage(): void {
     const token = this.tokenService.getAccessToken();
     const user = this.storage.get<User>(environment.userKey);
@@ -49,10 +73,22 @@ export class AuthService {
     }
   }
 
+  /**
+   * Retorna el estado de autenticación actual de forma síncrona.
+   *
+   * @returns {boolean} `true` si el usuario está autenticado.
+   */
   isAuthenticated(): boolean {
     return this._isAuthenticated();
   }
 
+  /**
+   * Inicia sesión con email y contraseña.
+   * Almacena tokens y datos del usuario en sesión al completarse.
+   *
+   * @param {LoginDto} dto - Credenciales del usuario.
+   * @returns {Observable<ApiResponse<AuthResponse>>}
+   */
   login(dto: LoginDto): Observable<ApiResponse<AuthResponse>> {
     return this.http
       .post<ApiResponse<AuthResponse>>(`${environment.apiUrl}/auth/login`, dto)
@@ -69,6 +105,12 @@ export class AuthService {
       );
   }
 
+  /**
+   * Registra un nuevo usuario y lo autentica automáticamente.
+   *
+   * @param {RegisterDto} dto - Datos del nuevo usuario.
+   * @returns {Observable<ApiResponse<AuthResponse>>}
+   */
   register(dto: RegisterDto): Observable<ApiResponse<AuthResponse>> {
     return this.http
       .post<ApiResponse<AuthResponse>>(`${environment.apiUrl}/auth/register`, dto)
@@ -85,6 +127,10 @@ export class AuthService {
       );
   }
 
+  /**
+   * Cierra la sesión del usuario actual.
+   * Notifica al backend y limpia la sesión local independientemente del resultado.
+   */
   logout(): void {
     this.http
       .post<void>(`${environment.apiUrl}/auth/logout`, {})
@@ -94,6 +140,12 @@ export class AuthService {
       });
   }
 
+  /**
+   * Envía un email de recuperación de contraseña al usuario.
+   *
+   * @param {ForgotPasswordDto} dto - Email del usuario.
+   * @returns {Observable<ApiResponse<void>>}
+   */
   forgotPassword(dto: ForgotPasswordDto): Observable<ApiResponse<void>> {
     return this.http
       .post<ApiResponse<void>>(`${environment.apiUrl}/auth/forgot-password`, dto)
@@ -106,6 +158,12 @@ export class AuthService {
       );
   }
 
+  /**
+   * Refresca el access token usando el refresh token almacenado.
+   * Limpia la sesión si el refresco falla.
+   *
+   * @returns {Observable<ApiResponse<AuthResponse>>}
+   */
   refreshToken(): Observable<ApiResponse<AuthResponse>> {
     const refreshToken = this.tokenService.getRefreshToken();
     return this.http
@@ -121,6 +179,12 @@ export class AuthService {
       );
   }
 
+  /**
+   * Obtiene el perfil actualizado del usuario autenticado desde el backend
+   * y sincroniza el estado local.
+   *
+   * @returns {Observable<ApiResponse<User>>}
+   */
   getProfile(): Observable<ApiResponse<User>> {
     return this.http.get<ApiResponse<User>>(`${environment.apiUrl}/auth/me`).pipe(
       tap((res) => {
@@ -130,6 +194,12 @@ export class AuthService {
     );
   }
 
+  /**
+   * Actualiza los datos del perfil del usuario autenticado.
+   *
+   * @param {UpdateUserDto} dto - Campos a actualizar.
+   * @returns {Observable<ApiResponse<User>>}
+   */
   updateProfile(dto: UpdateUserDto): Observable<ApiResponse<User>> {
     return this.http.put<ApiResponse<User>>(`${environment.apiUrl}/auth/me`, dto).pipe(
       tap((res) => {
@@ -144,6 +214,12 @@ export class AuthService {
     );
   }
 
+  /**
+   * Cambia la contraseña del usuario autenticado.
+   *
+   * @param {ChangePasswordDto} dto - Contraseña actual y nueva contraseña.
+   * @returns {Observable<ApiResponse<void>>}
+   */
   changePassword(dto: ChangePasswordDto): Observable<ApiResponse<void>> {
     return this.http
       .put<ApiResponse<void>>(`${environment.apiUrl}/auth/change-password`, dto)
@@ -156,6 +232,11 @@ export class AuthService {
       );
   }
 
+  /**
+   * Almacena tokens y datos del usuario en memoria y en almacenamiento local.
+   *
+   * @param {AuthResponse} data - Respuesta de autenticación con tokens y usuario.
+   */
   private setSession(data: AuthResponse): void {
     this.tokenService.setTokens(data.accessToken, data.refreshToken);
     this.storage.set(environment.userKey, data.user);
@@ -163,6 +244,9 @@ export class AuthService {
     this._isAuthenticated.set(true);
   }
 
+  /**
+   * Limpia tokens, datos de usuario y redirige al login.
+   */
   private clearSession(): void {
     this.tokenService.clearTokens();
     this.storage.remove(environment.userKey);
