@@ -20,17 +20,20 @@ import reportsRoutes from './modules/reports/reports.routes';
 
 const app: Application = express();
 
+app.set('trust proxy', 1);
+
 // ─── Security Middleware ─────────────────────────────────────────────────────
 
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: false,
   })
 );
 
 app.use(
   cors({
-    origin: [config.frontendUrl, 'http://localhost:4200', 'http://localhost:3000'],
+    origin: [config.frontendUrl, 'https://d1r0rtuof7w2wd.cloudfront.net','http://localhost:4200', 'http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -42,6 +45,7 @@ const limiter = rateLimit({
   max: config.rateLimit.max,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.',
@@ -70,12 +74,6 @@ const swaggerOptions: swaggerJsdoc.Options = {
         email: 'support@sportreserve-uptc.com',
       },
     },
-    servers: [
-      {
-        url: `http://localhost:${config.port}`,
-        description: 'Development server',
-      },
-    ],
     components: {
       securitySchemes: {
         bearerAuth: {
